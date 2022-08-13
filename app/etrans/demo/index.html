@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <title>ETRANS test page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 14px Helvetica, Arial;
+            width: 600px;
+            color: #231F20;
+        }
+
+        form {
+            margin: auto;
+            text-align: right;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+        }
+
+        form select {
+            padding: 10px;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+        }
+
+        form button {
+            background: #007bff;
+            color: #ffffff;
+            font-weight: 300;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        ul li {
+            list-style: none;
+            margin-top: 5px;
+        }
+
+        .mt {
+            margin-top: 20px;
+        }
+
+        .p {
+            padding: 20px;
+        }
+
+        .pt {
+            padding-top: 10px;
+        }
+
+        .bt {
+            border-top: 1px solid #cccccc;
+        }
+
+        .w-600 {
+            width: 600px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+        }
+
+        .grid-item {
+            padding: 20px;
+        }
+
+        .request-id {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .request-id:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <div class="grid-item">
+            <h1 class="mt">Translation request demo</h1>
+            <small>Use the textare below to request translations</small>
+            <form class="mt w-600" action="" id="translation-form">
+                <textarea id="translation-text"></textarea>
+                <select id="source-language">
+                    <option value="EN" selected>EN</option>
+                    <option value="FR">FR</option>
+                    <option value="DE">DE</option>
+                    <option value="RO">RO</option>
+                    <option value="IT">IT</option>
+                </select>
+                &rarr;
+                <select id="target-language">
+                    <option value="EN">EN</option>
+                    <option value="FR" selected>FR</option>
+                    <option value="DE">DE</option>
+                    <option value="RO">RO</option>
+                    <option value="IT">IT</option>
+                </select>
+                &rarr;
+                <button class="mt">Request translation</button>
+            </form>
+
+            <ul class="mt" id="messages"></ul>
+        </div>
+        <div class="grid-item w-600">
+            <h1 class="mt">Preview</h1>
+            <small>Click on the request id to see the translation preview</small>
+            <div>
+                <textarea class="mt" id="preview"></textarea>
+            </div>
+            <div class="bt mt pt">
+                <small>Translated to: <span id="translated-to"></span></small>
+            </div>
+        </div>
+    </div>
+    <div class="mt p">
+    </div>
+
+<script>
+
+    var _form = document.getElementById("translation-form");
+    var _text = document.getElementById("translation-text");
+    var _sourceLanguage = document.getElementById("source-language");
+    var _targetLanguage = document.getElementById("target-language");
+    var preview = document.getElementById('preview');
+
+    _form.addEventListener("submit", function (event) {
+
+      event.preventDefault();
+
+      // Emit event to server.
+      var requestMessage = {
+        textToTranslate: _text.value,
+        sourceLanguage: _sourceLanguage.value,
+        targetLanguage: _targetLanguage.value,
+        domain: "spd",
+      };
+
+      var xhttp = new XMLHttpRequest();
+      var url = location.protocol + "//" + location.host + "/webtools/rest/etrans/translate";
+
+      xhttp.onreadystatechange = function () {
+
+        if (this.readyState === 4 && this.status === 200) {
+
+          var response = JSON.parse(this.responseText);
+
+          if (response.message) {
+            addMessage("&larr; " + response.message, 'red');
+          }
+
+          else {
+            addMessage("&larr; translation received from server for");
+            displayPreview(response.translation);
+          }
+
+        }
+
+      };
+
+      xhttp.open("POST", url, true);
+      xhttp.setRequestHeader("Content-Type", "application/json");
+      xhttp.send(JSON.stringify(requestMessage));
+
+      addMessage("&rarr; translation-request by client from ." +
+        _sourceLanguage.value + " to " + _targetLanguage.value);
+
+      return false;
+    });
+
+    var addMessage = function (message, color) {
+
+      color = color ? color : 'black';
+
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+      var messageString = '<li style="color: ' + color + '">' + time + " " + message + '</li>';
+      document.getElementById("messages").insertAdjacentHTML('beforeend', messageString);
+    }
+
+    var displayPreview = function (message) {
+      preview.value = decodeURIComponent(escape(atob(message)));
+    }
+
+</script>
+
+</body>
+
+</html>

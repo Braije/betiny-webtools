@@ -1,0 +1,7 @@
+/vendor
+/node_modules
+/temp/*
+/.idea
+/.env
+/server.cert
+/server.key
