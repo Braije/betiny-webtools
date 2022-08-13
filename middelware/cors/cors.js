@@ -12,15 +12,13 @@ module.exports = $wt => {
 
   // Trivial example that can be improved for more supported header etc..
   $wt.route.middelware.add("CORS - Header", 105, (req, res, next) => {
-
     if (req.config.cors) {
       res.header("Access-Control-Allow-Origin", "*");
     }
-
     next();
-
   });
 
+  /*
   $wt.route.middelware.add("TOTO - Header", 106, (req, res, next) => {
     if (req.config.toto === "tutu") {
       console.log("mqlkdsjfqmlsdkfjqsmldkfjqsdlmfkjsdmflkjsdmlkj");
@@ -31,5 +29,6 @@ module.exports = $wt => {
   $wt.on("ready", () => {
     console.log("List of existing middelware", $wt.route.middelware.list());
   });
+  */
 
 };
