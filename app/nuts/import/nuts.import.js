@@ -104,7 +104,7 @@ require("../../../betiny")(async $wt => {
         if (remoteSize === localSize && fs.existsSync(localFile)) {
           let content = await fs.readFileSync(localFile, 'utf8');
 
-          console.log($wt.template(params.loading, {
+          console.log($wt.placeholder(params.loading, {
             byte: '',
             total: $wt.formatBytes(remoteSize),
             pourcent: 100
@@ -148,7 +148,7 @@ require("../../../betiny")(async $wt => {
         byte = byte + chunk.length;
         result += chunk;
 
-        let message = $wt.template(params.loading, {
+        let message = $wt.placeholder(params.loading, {
           byte: $wt.formatBytes(byte),
           total: total,
           pourcent: Math.round((byte/totalLength) * 100)
@@ -203,7 +203,7 @@ require("../../../betiny")(async $wt => {
       target = '{url}/nuts/geojson/NUTS_LB_{year}_{projection}_LEVL_{level}.geojson';
     }
 
-    let url = $wt.template(target, {
+    let url = $wt.placeholder(target, {
       url: config.eurostat,
       year: params.year,
       projection: params.projection,
@@ -267,7 +267,7 @@ require("../../../betiny")(async $wt => {
     }
 
     // Format url.
-    let url = $wt.template(target, {
+    let url = $wt.placeholder(target, {
       url: config.eurostat,
       precision: params.precision,
       year: params.year,

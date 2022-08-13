@@ -28,7 +28,7 @@ module.exports = $wt => {
      * @returns STRING XHTML
      */
 
-    template: (str, placeholders, options) => {
+    placeholder: (str, placeholders, options) => {
 
       // Use only with String.
       if (typeof str !== 'string') {
@@ -151,7 +151,7 @@ module.exports = $wt => {
      * @returns {string}
      */
 
-    placeholder: (content, placeholders) => {
+    BAD_placeholder: (content, placeholders) => {
 
       const replace = (k, n) => {
 

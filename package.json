@@ -36,7 +36,8 @@
   "scripts": {
     "start": "node server.js",
     "prod": "pm2 start server.js -i -1",
-    "dev": "nodemon -e js,tpl,css ./server.js"
+    "dev": "nodemon -e js,tpl,css ./server.js",
+    "test": "node server test"
   },
   "author": "Braije Christophe",
   "license": "ISC"

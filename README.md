@@ -1,7 +1,7 @@
 # Memo
 Some ideas to investigate.
 
-    app.get('/**:type(html)' ...
+    app.get('/**:type(html)' ?
     localtunnel: https://www.pluralsight.com/guides/exposing-your-local-node-js-app-to-the-world
 
 # Architecture
@@ -14,10 +14,10 @@ Some ideas to investigate.
 
 # Goal
 
-The main goal is to expose any service quickly without
-take into account all architecture, security issue
-and having a database API already implemented.
-We have a module approach to let a team working together.
+    /api = wrapper methods => $wt
+    /app = custom services based on API
+    /middleware = custom middleware based on API
+    /temp = custom temp storage
 
 # Install
 
@@ -32,13 +32,9 @@ Manage your own certificat
 
     openssl req -nodes -new -x509 -keyout server.key -out server.cert
 
-For the rest simply clone the repository
+For the rest simply clone the repository and after that, as usual, install node modules.
 
-    git clone https://github.com/Braije/betiny.git .
-
-After that, as usual, install node modules.
-
-    npm install
+    yarn
 
 Rename .env-sample to .env and fill values with your own
 
@@ -48,26 +44,14 @@ Initiate your install app. Some of them need
 to install a database etc..
 
     // Run all (xxx/yyy/install).
-    node server install
+    yarn dev install
 
     // Run only one (xxx/nuts/install)
-    node server install:nuts
-
-    // OR ...
-    yarn dev install
     yarn dev install:nuts
 
 To run the application
 
     // Default
-    node server
-
-    // Dev mode
-    // server restart automatically afer
-    // each changes.
-    node run dev
-
-    // Or with yarn
     yarn dev
 
     // On prod use PM2
@@ -77,11 +61,37 @@ To run the application
 Run any test
 
     // Default
-    node server test
-
-    //
-
+    yarn test
 
 ## Documentation
 TODO
+
+### API
+
+    FUNCTION - $wt.extend
+    FUNCTION - $wt.trigger
+    FUNCTION - $wt.on
+    FUNCTION - $wt.off
+    FUNCTION - $wt.once
+    FUNCTION - $wt.glob
+    COLLECTION - $wt.config
+    COLLECTION - $wt.process
+    COLLECTION - $wt.db
+    COLLECTION - $wt.route
+    FUNCTION - $wt.template
+    FUNCTION - $wt.next
+    FUNCTION - $wt.job
+    FUNCTION - $wt.request
+    COLLECTION - $wt.file
+    FUNCTION - $wt.placeholder
+    FUNCTION - $wt.BAD_placeholder
+    FUNCTION - $wt.hash
+    FUNCTION - $wt.id
+    FUNCTION - $wt.formatBytes
+    FUNCTION - $wt.cleanFolder
+    FUNCTION - $wt.minify
+    FUNCTION - $wt.iterate
+    FUNCTION - $wt.log
+    FUNCTION - $wt.merge
+    FUNCTION - $wt.queue
 

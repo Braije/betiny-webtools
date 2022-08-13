@@ -243,7 +243,8 @@ module.exports = $wt => {
       template(filePath, replace, (error, content) => {
         error ? reject(path) : resolve(content)
       })
-    })
+    });
+
   };
 
   /**
