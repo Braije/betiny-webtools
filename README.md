@@ -68,30 +68,65 @@ TODO
 
 ### API
 
-    FUNCTION - $wt.extend
-    FUNCTION - $wt.trigger
-    FUNCTION - $wt.on
-    FUNCTION - $wt.off
-    FUNCTION - $wt.once
-    FUNCTION - $wt.glob
-    COLLECTION - $wt.config
-    COLLECTION - $wt.process
-    COLLECTION - $wt.db
-    COLLECTION - $wt.route
-    FUNCTION - $wt.template
-    FUNCTION - $wt.next
-    FUNCTION - $wt.job
-    FUNCTION - $wt.request
-    COLLECTION - $wt.file
-    FUNCTION - $wt.placeholder
-    FUNCTION - $wt.BAD_placeholder
-    FUNCTION - $wt.hash
-    FUNCTION - $wt.id
-    FUNCTION - $wt.formatBytes
-    FUNCTION - $wt.cleanFolder
-    FUNCTION - $wt.minify
-    FUNCTION - $wt.iterate
-    FUNCTION - $wt.log
-    FUNCTION - $wt.merge
-    FUNCTION - $wt.queue
+#### UTILS
 
+    $wt.extend
+    $wt.config
+    $wt.merge
+    $wt.iterate
+    $wt.log
+    $wt.job(...).task(...).execute(...)
+    $wt.queue(...).push(...).execute(...)
+
+#### EVENTS
+
+    $wt.trigger -> $wt.fire?
+    $wt.on
+    $wt.off
+    $wt.once
+
+#### PROCESS
+
+    $wt.process.shell
+    $wt.process.fork
+    $wt.process.child
+
+#### DATABASE
+
+    $wt.db.mysql
+    $wt.db.mysql.install
+
+#### SYSTEM
+
+    $wt.glob
+    $wt.next
+    $wt.cleanFolder
+    $wt.minify
+
+#### ALIAS
+
+    $wt.file -> FS
+    $wt.request -> AXIOS
+
+#### ROUTE
+
+    $wt.route.static
+    $wt.route.start
+    $wt.route.page
+    $wt.route.rest
+    $wt.route.form
+    $wt.route.file
+    $wt.route.middelware.add
+    $wt.route.middelware.list
+
+#### TEMPLATE
+
+    $wt.template
+    $wt.template.add
+
+#### STRING
+
+    $wt.placeholder
+    $wt.hash
+    $wt.id
+    $wt.formatBytes

@@ -142,50 +142,6 @@ module.exports = $wt => {
     },
 
     /**
-     * PLACEHOLDER
-     * Allow you to replace some {placeholder} or ___placeholder___ inside string.
-     * TODO: review regex ^^
-     *
-     * @param content {string}
-     * @param placeholders {object}
-     * @returns {string}
-     */
-
-    BAD_placeholder: (content, placeholders) => {
-
-      const replace = (k, n) => {
-
-        let placeholder = placeholders[n];
-
-        if (!placeholder && placeholder !== false && placeholder !== 0) {
-          return k;
-        }
-
-        if (typeof placeholder === 'string') {
-          return placeholder;
-        }
-        else if (typeof placeholder === 'object') {
-          return JSON.stringify(placeholder);
-        }
-
-        return k;
-
-      };
-
-      let toto = content.replace(/{([\w_\-]+)}/g, (k, n) => {
-        return replace(k,n);
-      }).replace(/___([\w_\-]+)___/g, (k, n) => {
-        return replace(k,n);
-      });
-
-      console.log(toto);
-
-      return toto;
-
-
-    },
-
-    /**
      * HASH
      * Create an unique id base from string
      *
