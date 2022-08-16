@@ -41,7 +41,7 @@ module.exports = $wt => {
       if (typeof obj[x] === 'function') {
         data.push({
           name: path,
-          type: "FUNCTION"
+          type: ""
         });
       }
 

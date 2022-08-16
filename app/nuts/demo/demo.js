@@ -8,7 +8,7 @@
   var button = document.querySelector('button');
   var map = L.map('map').setView([50, 4.4], 3);
 
-  L.tileLayer('https://europa.eu/webtools/maps/tiles/osm-ec/3857/{z}/{x}/{y}').addTo(map);
+  L.tileLayer("https://gisco-services.ec.europa.eu/maps/tiles/OSMCartoCompositeRO/EPSG3857/{z}/{x}/{y}.png").addTo(map);
 
 /**
  * PLUGINS
