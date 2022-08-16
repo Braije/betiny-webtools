@@ -63,8 +63,64 @@ Run any test
     // Default
     yarn test
 
-## Documentation
-TODO
+## Quickly
+
+Add your own middleware
+
+    // ./middelware/cors.js
+    module.exports = $wt => {
+
+      $wt.route.middelware.add("MY CORS", 105, (req, res, next) => {
+          if (req.config.cors) {
+            res.header("Access-Control-Allow-Origin", "*");
+          }
+          next();
+      });
+
+    }
+
+Apply it into your route
+
+    // ./app/myservice/toto.js
+    module.exports = $wt => {
+
+      const response = (req, res) => {
+        res.send(...);
+      };
+
+      $wt.route.get("/toto", { cors: true }, response);
+
+    }
+
+Events management
+
+    // ./app/myservice/toto.js
+    module.exports = $wt => {
+
+      const response = (req, res) => {
+        $wt.trigger("totoWasGet", {...});
+        res.send(...);
+      };
+
+      $wt.route.get("/toto", { cors: true }, response);
+
+      $wt.on("ready", () => {
+        ...
+        $wt.trigger("totoIsReady", {...});
+      });
+
+    }
+
+    // ./app/myservice/survey.js
+    module.exports = $wt => {
+      $wt.on("totoWasGet", evt => { ... });
+      $wt.on("totoIsReady", evt => { ... });
+    }
+
+    // ./app/myservice/others.js
+    module.exports = $wt => {
+      $wt.on("totoIsReady", evt => { ... });
+    }
 
 ### API
 
