@@ -223,6 +223,11 @@ module.exports = $wt => {
 
     const page = await browser.newPage();
 
+    // Disable Javascript.
+    if (query.html) {
+      page.setJavaScriptEnabled(false);
+    }
+
     if (process.env.PROXY === 1) {
       await page.authenticate({
         username: process.env.PROXY_USER,
