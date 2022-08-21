@@ -46,7 +46,7 @@ module.exports = async (params = {}) => {
   let precision = params.precision || false;
   let level = (params.level === 'false') ? false : Number(params.level);
 
-  let iterations = available.filter(entry => {
+  let iterations = (size === 0) ? available : available.filter(entry => {
 
     if (size === 3 && year === entry.year && precision === entry.precision && level === entry.level) {
       return true;
@@ -379,7 +379,7 @@ module.exports = async (params = {}) => {
       let CNTR_INFO = config.centroid[CNTR_ID]||{};
       let CENTROID = centroid[feature.properties.NUTS_ID || CNTR_ID];
           CENTROID = (CENTROID) ? [CENTROID[1],CENTROID[0]] : (CNTR_INFO.c || [0,0]);
-      let LEVEL = feature.properties.LEVL_CODE;
+      let LEVEL = feature.properties.LEVL_CODE || feature.properties.LVL_CODE;
           LEVEL = (LEVEL === 0) ? 0 : LEVEL;
           LEVEL = (LEVEL === false) ? false : LEVEL;
           LEVEL = (!LEVEL) ? false : LEVEL;
@@ -393,7 +393,7 @@ module.exports = async (params = {}) => {
           "NUTS_ID": feature.properties.NUTS_ID || null,
           "NUTS_NAME": feature.properties.NUTS_NAME || null,
           "CENTROID": CENTROID,
-          "LEVL_CODE": LEVEL
+          "LVL_CODE": LEVEL
         }
       };
 

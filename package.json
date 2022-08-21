@@ -5,8 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "axios": "^0.27.2",
-    "betiny-core": "latest",
-    "compression": "^1.7.4",
+    "betiny-core": "^1.0.2",
     "geobuf": "^3.0.2",
     "pbf": "^3.2.1"
   },

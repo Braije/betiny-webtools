@@ -7,14 +7,13 @@ console.clear();
 const $ = require('betiny-core');
 
 // Self organisation.
-require('./middlewares/main.js');
 require('./rest/nuts');
 
 // Self start management.
 $.server.start(() => {
 
   // Root server :-)
-  $.route.get('/', { token: false }, (req, res) => {
+  $.route.get('/', (req, res) => {
     res.json("Welcome to my custom server.");
   });
 
