@@ -1,5 +1,5 @@
 # About
-Yeahh webtools implementation using "betiny-core" as module.
+Yeahh webtools implementation using [betiny-core](https://github.com/Braije/betiny-core) as module.
 
 ## Note
 - /temp for storing local data
