@@ -33,7 +33,7 @@ $.arguments.add('nuts:import', nutsImport);
 
 const nutsService = require("./core/service.js");
 
-$.route.get("/rest/nuts*", { token: false }, nutsService);
+$.route.get("/rest/nuts*", nutsService);
 
 /**
  * DEMO
@@ -41,32 +41,6 @@ $.route.get("/rest/nuts*", { token: false }, nutsService);
 
 $.route.static("/demo/nuts", __dirname + "/demo");
 
-$.on("betiny:server:start", () => {
+$.on("ready", () => {
    $.log.info("NUTS DEMO", $.server.url("/demo/nuts") );
-});
-
-/**
- * TEST ZONE
- * TODO: USE FOR INTERNAL TESTING
- */
-
-$.arguments.add('nuts:job', async args => {
-
-    $.job("NUTS - test using job", {
-        continue: true
-    })
-    .task("Test 1 will success", async cfg => {
-        return true;
-    })
-    .task("Test 2 will continue on error", async cfg => {
-        await $.utils.delay(500);
-        return false;
-    })
-    .task("A the last but not least", async cfg => {
-        return true;
-    })
-    .execute( () => {
-        process.exit();
-    });
-
 });
