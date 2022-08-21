@@ -1,43 +1,20 @@
 {
-  "name": "betiny",
+  "name": "betiny-webtools",
   "version": "1.0.0",
   "description": "POC architecture",
-  "main": "server.js",
+  "main": "index.js",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "clean-css": "^4.2.1",
+    "axios": "^0.27.2",
+    "betiny-core": "latest",
     "compression": "^1.7.4",
-    "dotenv": "^8.0.0",
-    "events": "^3.0.0",
-    "express": "^4.17.1",
-    "express-session": "^1.16.2",
-    "fast-glob": "^3.1.0",
-    "find-remove": "^2.0.3",
-    "fs": "0.0.1-security",
-    "geobuf": "^3.0.1",
-    "helmet": "^3.21.1",
-    "https": "^1.0.0",
-    "jsdom": "^15.1.1",
-    "localtunnel": "2.0.1",
-    "localtunnel-https": "1.10.1",
-    "mysql2": "^1.6.5",
-    "path": "^0.12.7",
-    "pbf": "^3.2.1",
-    "pm2": "^4.4.0",
-    "puppeteer": "16.1.0",
-    "request": "2.88.2",
-    "uglify-es": "3.3.9",
-    "xlsx": "0.16.9"
-  },
-  "devDependencies": {
-    "nodemon": "2.0.7"
+    "geobuf": "^3.0.2",
+    "pbf": "^3.2.1"
   },
   "scripts": {
-    "start": "node server.js",
-    "prod": "pm2 start server.js -i -1",
-    "dev": "nodemon -e js,tpl,css ./server.js",
-    "test": "node server test"
-  },
-  "author": "Braije Christophe",
-  "license": "ISC"
+    "start": "node index.js",
+    "prod": "pm2 start ./index.js -i -1",
+    "dev": "nodemon -e js,tpl,css ./index.js",
+    "stop-win": "Taskkill /IM node.exe /F",
+    "stop-linux": "killall node"
+  }
 }
