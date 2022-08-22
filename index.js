@@ -7,17 +7,18 @@ console.clear();
 const $ = require('betiny-core');
 
 // Self organisation.
+require('./rest/html2m');
 require('./rest/nuts');
+
+// Custom root route.
+$.route.get('/', (req, res) => {
+  res.send("Welcome to my custom server.");
+});
 
 // Self start management.
 $.server.start(() => {
 
-  // Root server :-)
-  $.route.get('/', (req, res) => {
-    res.json("Welcome to my custom server.");
-  });
-
-  // Propagate a custom event.
+  // Custom events.
   $.fire('ready');
 
 });

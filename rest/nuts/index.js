@@ -41,6 +41,6 @@ $.route.get("/rest/nuts*", nutsService);
 
 $.route.static("/demo/nuts", __dirname + "/demo");
 
-$.on("ready", () => {
-   $.log.info("NUTS DEMO", $.server.url("/demo/nuts") );
+$.on("betiny:server:start", () => {
+   $.log.info("DEMO NUTS", $.server.url("/demo/nuts") );
 });
