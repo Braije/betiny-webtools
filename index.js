@@ -7,8 +7,8 @@ console.clear();
 const $ = require('betiny-core');
 
 // Self organisation.
-require('./rest/html2m');
-require('./rest/nuts');
+require('./app/html2m');
+require('./app/nuts');
 
 // Custom root route.
 $.route.get('/', (req, res) => {

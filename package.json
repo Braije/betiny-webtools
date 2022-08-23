@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "axios": "^0.27.2",
-    "betiny-core": "^1.0.2",
+    "betiny-core": "latest",
     "geobuf": "^3.0.2",
     "pbf": "^3.2.1",
     "puppeteer": "^16.2.0"

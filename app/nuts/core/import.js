@@ -4,8 +4,8 @@ const $ = require('betiny-core');
 
 // TODO: move to API as central.
 const axios = require('axios');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
 // Custom config.
 const config = require('./config.js');
@@ -104,9 +104,7 @@ module.exports = async (params = {}) => {
         try {
 
           // Create store path.
-          await fs.mkdirSync(storePath, {
-            recursive: true
-          });
+          await $.folder.create(storePath);
 
         }
         catch (error) {
@@ -144,8 +142,8 @@ module.exports = async (params = {}) => {
         let remoteSize = Number(sizeCheck.headers['content-length']);
 
         // If file already exist and same size, use it.
-        if (remoteSize === localSize && fs.existsSync(localFile)) {
-          let content = await fs.readFileSync(localFile, 'utf8');
+        if (remoteSize === localSize && $.file.exist(localFile)) {
+          let content = await $.file.read(localFile, 'utf8');
 
           console.log($.replace(params.loading, {
             byte: '',
