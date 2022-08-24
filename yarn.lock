@@ -62,10 +62,10 @@ base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-betiny-core@latest:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/betiny-core/-/betiny-core-1.0.4.tgz#cb01a225a5eacb1e7401fb3cb23182fc2b2680e1"
-  integrity sha512-nt/j2RO945jV6yrPW7qEhdmlIfo5QmlyXVdChTTsOtaaLyqMSaGb9SCwth7ja6PNlZa9km9/azLnM9k7ZbtzPA==
+betiny-core@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/betiny-core/-/betiny-core-1.0.5.tgz#4e0b26499df7f04bd2fce478698090214eb764ec"
+  integrity sha512-mM0NkcFIUaOiH9wAWPq0gP4P451DXPPpf0olGEXwMZXbtdPBHfeDjpia8sfg+B9o453cqfNMLmrNPhlFbW/zZQ==
   dependencies:
     compression "^1.7.4"
     dotenv "^8.0.0"

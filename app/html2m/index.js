@@ -177,7 +177,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
     let data = query.html;
 
     // Generate the html page.
-    inputName = "html2m_" + $.utils.id() + ".html";
+    inputName = "html2m_" + $.id() + ".html";
 
     // Write it.
     await fs.writeFile(config.folder + '/' + inputName, data, err => {
@@ -249,7 +249,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   // Implement print to pdf if output extension is pdf.
   await page.waitForTimeout(parseInt(loadDelay));
 
-  let outputFileName = "html2m_" + $.utils.id() + "." + outputType;
+  let outputFileName = "html2m_" + $.id() + "." + outputType;
 
   if (outputType === "pdf") {
 
