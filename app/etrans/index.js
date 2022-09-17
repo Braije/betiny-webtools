@@ -1,5 +1,3 @@
-// TODO: TODO: TODO: TODO:
-
 /**
  * ETRANS
  * Wrapper to forward request from Webtools to eTranslation service.
@@ -9,16 +7,15 @@
  *
  * DOC eTranslation Service.
  * https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/How+to+submit+a+translation+request+via+the+CEF+eTranslation+webservice
- *
- * TODO: expose received response from translation service to make it work locally.
  */
 
+const $ = require('betiny-core');
+
+// TODO: REMOVE
 const request = require('request');
 const localtunnel = require('localtunnel');
 
 const config = require('./config/config.js');
-
-module.exports = async $wt => {
 
   /**
    * TUNNELING
@@ -26,12 +23,12 @@ module.exports = async $wt => {
    * TODO: apply only for local test :p
    */
 
-  const tunnel = await localtunnel({
+  const tunnel = localtunnel({
     port: process.env.HTTP_PORT,
     subdomain: "mylocalhost"
   });
 
-  process.env.PUBLIC_URL = process.env.PUBLIC_URL || tunnel.url;
+  process.env.PUBLIC_URL = $.server.url() || tunnel.url;
 
   // References.
   let timer = {};
@@ -51,7 +48,7 @@ module.exports = async $wt => {
    * REQUEST TRANSLATION
    */
 
-  $wt.route.form("/webtools/rest/etrans/translate", async (req, res) => {
+  $.route.post("/rest/etrans/translate", async (req, res) => {
 
     // References.
     let id = req.query.id || $wt.id();
@@ -63,7 +60,7 @@ module.exports = async $wt => {
      * Wait until we received feedback from "collector".
      */
 
-    $wt.once("etrans.feedback." + id, params => {
+    $.once("etrans.feedback." + id, params => {
 
       // id: req.query.id,
       // data: data,
@@ -187,7 +184,7 @@ module.exports = async $wt => {
    * RECEIVED TRANSLATION
    */
 
-  $wt.route.form("/webtools/rest/etrans/collector", async (req, res) => {
+  $.route.post("/rest/etrans/collector", async (req, res) => {
 
     let data = [];
 
@@ -209,7 +206,7 @@ module.exports = async $wt => {
       };
 
       // Propagate events.
-      $wt.trigger("etrans.feedback." + params.id, params);
+      $.trigger("etrans.feedback." + params.id, params);
 
     });
 
@@ -222,19 +219,25 @@ module.exports = async $wt => {
    * DEMO
    */
 
-  $wt.route.static("/webtools/demo/etrans", __dirname + "/demo");
+  $.route.static("/demo/etrans", __dirname + "/demo");
 
   /**
    * CATCH EVENTS
    */
 
-  $wt.on('ready', () => {
+  $.on('ready', () => {
 
-    // Drop message.
-    console.log("\033[32m DEMO - ETRANS:\033[0m \t", process.env.HTTP_FULLPATH + "/webtools/demo/etrans");
+    console.log(
+      $.draw()
+        .space(1).background("yellow").text(" ETRANS ").reset()
+        .space(1).icon("top").text("  DEMO")
+        .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/etrans'))
+        .text("\n").reset()
+        .finish()  
+    );
 
     return;
-
+    
     request.post({
 
       url: process.env.ETRANS_URL,
@@ -258,7 +261,7 @@ module.exports = async $wt => {
         },
 
         destinations: {
-          httpDestinations: [tunnel.url + "/webtools/rest/etrans/collector?id=" + $wt.id()]
+          httpDestinations: [tunnel.url + "/webtools/rest/etrans/collector?id=" + $.id()]
         }
 
       },
@@ -270,6 +273,11 @@ module.exports = async $wt => {
       }
 
     }, (error, response, body) => {
+
+      if (error) {
+        console.log("ERROR", error.message);
+        return;
+      }
 
       let responseFrom = response.toJSON();
 
@@ -284,5 +292,3 @@ module.exports = async $wt => {
     });
 
   });
-
-};

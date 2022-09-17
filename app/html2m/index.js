@@ -350,7 +350,7 @@ $.on("betiny:server:start", async () => {
     });
   }
   catch (error) {
-    $.log.error("HTML2M", "Your html2m folder was not created.");
+    $.log("HTML2M", "Your html2m folder was not created.");
     process.exit();
   }
 
@@ -368,6 +368,17 @@ $.on("betiny:server:start", async () => {
    * DROP MESSAGE INFO
    */
 
-  $.log.info("DEMO HTML2M", $.server.url('/demo/html2m') );
+  $.on("ready", () => {
+
+    console.log(
+      $.draw()
+        .space(1).background("green").text(" HTML2M ").reset()
+        .space(1).icon("top").text("  DEMO")
+        .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
+        .text("\n").reset()
+        .finish()  
+    );
+    
+  });
 
 });

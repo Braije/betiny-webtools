@@ -464,7 +464,7 @@ module.exports = async (params = {}) => {
      *  - EXCEPTION COUNTRIES: FR, PT, ES, KS
      */
 
-    // $.log.child(params.year, params.precision, params.level, params.projection);
+    // $.log(params.year, params.precision, params.level, params.projection);
     // console.log("\033[90m----------------------------------------\033[0m");
 
     let centroid = await getLabel(params);
@@ -534,7 +534,7 @@ module.exports = async (params = {}) => {
      */
 
     // console.log("\033[90m----------------------------------------\033[0m");
-    $.log.pipe();
+    $.log();
 
     let loop = 0;
 
@@ -670,11 +670,11 @@ module.exports = async (params = {}) => {
 
     // If not exist.
     if (tables.length === 0) {
-      $.log.end("\033[31mGEOJSON\033[0m\t", "FAILED, run install command first.");
+      $.log("\033[31mGEOJSON\033[0m\t", "FAILED, run install command first.");
       process.exit();
     }
     else {
-      $.log.end("\033[32mGEOJSON\033[0m\t", "OK");
+      $.log("\033[32mGEOJSON\033[0m\t", "OK");
     }
 
     /**
@@ -705,9 +705,9 @@ module.exports = async (params = {}) => {
 
       // Log info.
       console.log("\n");
-      $.log.top("\033[32mJOB\033[0m\t      ", count, "/", total);
-      //$.log.child("\033[32mPARAMS\033[0m\t\t", entry);
-      $.log.pipe("");
+      $.log("\033[32mJOB\033[0m\t      ", count, "/", total);
+      //$.log("\033[32mPARAMS\033[0m\t\t", entry);
+      $.log("");
 
       count++;
 
