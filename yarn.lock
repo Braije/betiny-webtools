@@ -125,10 +125,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-betiny-core@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/betiny-core/-/betiny-core-1.0.9.tgz#00cebcf2257efc224a651048783742b781770de2"
-  integrity sha512-B3pRY9lyPw0y1zbC4olXjv5YKy1cWrlC0h+rRg7tF1O6KfvtuZ1D3yB1n3RFIxwb7qUDf/pxxCR0r5YIs8VJ6Q==
+betiny-core@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/betiny-core/-/betiny-core-1.1.0.tgz#0b0fff330ddac5ede62c041bac36bdbaa98c064c"
+  integrity sha512-h1dRYmUf28G54vFcNkdvcLLYLLHWqTvu4G/tx15X9b3e8ehiPg6Zwf4XQ/dXtasvDRHSJowmLV8cfMn/04zLaw==
   dependencies:
     compression "^1.7.4"
     dotenv "^8.0.0"
