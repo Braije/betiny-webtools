@@ -372,7 +372,8 @@ $.on("betiny:server:start", async () => {
 
     console.log(
       $.draw()
-        .space(1).background("green").text(" HTML2M ").reset()
+        .space(1).background("green")
+        .color("black").text(" HTML2M ").reset()
         .space(1).icon("top").text("  DEMO")
         .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
         .text("\n").reset()

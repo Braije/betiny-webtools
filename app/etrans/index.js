@@ -17,278 +17,255 @@ const localtunnel = require('localtunnel');
 
 const config = require('./config/config.js');
 
-  /**
-   * TUNNELING
-   * Expose received response from translation service to make it work locally.
-   * TODO: apply only for local test :p
-   */
+// References.
+let timer = {}; 
+let tunnelling = $.server.url();
 
-  const tunnel = localtunnel({
-    port: process.env.HTTP_PORT,
-    subdomain: "mylocalhost"
-  });
+/**
+ * LOG STATS
+ * Record to database for stats.
+ */
 
-  process.env.PUBLIC_URL = $.server.url() || tunnel.url;
+const log = params => {
+  params.end = Date.now();
+  params.time = Number(params.end) - Number(params.now);
+  //console.log("LOG:", params);
+};
+
+/**
+ * REQUEST TRANSLATION
+ */
+
+$.route.post("/rest/etrans/translate", async (req, res) => {
 
   // References.
-  let timer = {};
+  let id = req.query.id || $.id();
+  let now = Date.now();
+  let referer = req.headers.referer || req.headers.referrer || null;
 
   /**
-   * LOG STATS
-   * Record to database for stats.
+   * EVENT LISTENER
+   * Wait until we received feedback from "collector".
    */
 
-  const log = params => {
-    params.end = Date.now();
-    params.time = Number(params.end) - Number(params.now);
-    //console.log("LOG:", params);
-  };
+  $.once("etrans.feedback." + id, params => {
+
+    // id: req.query.id,
+    // data: data,
+    // "request-id": req.query["request-id"],
+    // "target-language": req.query["target-language"]
+
+    // Response from SOAP take too much time.
+    if (!timer[params.id]) {
+
+      // TODO: but it was success then store somewhere?
+      return;
+    }
+
+    // Clear fallback timer.
+    clearTimeout(timer[params.id]);
+
+    // Format feedback result to client.
+    params.translation = params.data; //Buffer.from(params.data, 'base64').toString();
+
+    // Log
+    log({
+      now: now,
+      status: "success",
+      referer: referer
+    });
+
+    // Forward to user.
+    res.status(200).send(params);
+
+  });
 
   /**
-   * REQUEST TRANSLATION
+   * FORWARD REQUEST
    */
 
-  $.route.post("/rest/etrans/translate", async (req, res) => {
+  request.post({
 
-    // References.
-    let id = req.query.id || $wt.id();
-    let now = Date.now();
-    let referer = req.headers.referer || req.headers.referrer || null;
+    url: $.env("ETRANS_URL2"),
 
-    /**
-     * EVENT LISTENER
-     * Wait until we received feedback from "collector".
-     */
+    json: true,
 
-    $.once("etrans.feedback." + id, params => {
+    body: {
 
-      // id: req.query.id,
-      // data: data,
-      // "request-id": req.query["request-id"],
-      // "target-language": req.query["target-language"]
+      sourceLanguage: req.body.sourceLanguage,
+      targetLanguages: [req.body.targetLanguage],
+      domain: req.body.domain || "SPD", // GEN
 
-      // Response from SOAP take too much time.
-      if (!timer[params.id]) {
+      callerInformation: {
+        application: 'DIGIT_D1_Webttools_EUWidg_20200612',
+        username: 'Webtools'
+      },
 
-        // TODO: but it was success then store somewhere?
-        return;
+      documentToTranslateBase64: {
+        content: Buffer.from(req.body.textToTranslate).toString('base64'),
+        format: "html"
+      },
+
+      destinations: {
+        httpDestinations: [tunnelling + "/rest/etrans/collector?id=" + id]
       }
 
-      // Clear fallback timer.
-      clearTimeout(timer[params.id]);
+    },
 
-      // Format feedback result to client.
-      params.translation = params.data; //Buffer.from(params.data, 'base64').toString();
+    auth: {
+      user: $.env("ETRANS_USER"),
+      pass: $.env("ETRANS_PASSWORD"),
+      sendImmediately: false
+    }
+
+  }, (error, response, body) => {
+
+    // ERROR "-xxxx".
+    if (parseInt(body) < 0) {
 
       // Log
       log({
         now: now,
-        status: "success",
-        referer: referer
+        status: "error",
+        referer: referer,
+        error: config.error[body]
       });
 
-      // Forward to user.
-      res.status(200).send(params);
+      // Drop error request.
+      res.status(200).send({
+        message: "Etrans service is not available, try later.",
+        error: config.error[body]
+      });
 
-    });
+    }
 
-    /**
-     * FORWARD REQUEST
-     */
+    // Fallback if request take to much time.
+    else {
 
-    request.post({
+      timer[id] = setTimeout(() => {
 
-      url: process.env.ETRANS_URL,
+        // Memory cleanup.
+        delete timer[id];
 
-      json: true,
-
-      body: {
-
-        sourceLanguage: req.body.sourceLanguage,
-        targetLanguages: [req.body.targetLanguage],
-        domain: req.body.domain || "SPD", // GEN
-
-        callerInformation: {
-          application: 'DIGIT_D1_Webttools_EUWidg_20200612',
-          username: 'Webtools'
-        },
-
-        documentToTranslateBase64: {
-          content: Buffer.from(req.body.textToTranslate).toString('base64'),
-          format: "html"
-        },
-
-        destinations: {
-          httpDestinations: [tunnel.url + "/webtools/rest/etrans/collector?id=" + id]
-        }
-
-      },
-
-      auth: {
-        user: process.env.ETRANS_USER,
-        pass: process.env.ETRANS_PASSWORD,
-        sendImmediately: false
-      }
-
-    }, (error, response, body) => {
-
-      // ERROR "-xxxx".
-      if (parseInt(body) < 0) {
-
-        // Log
+        // Log.
         log({
           now: now,
-          status: "error",
-          referer: referer,
-          error: config.error[body]
+          status: "timeout",
+          referer: referer
         });
 
-        // Drop error request.
+        // Drop timeout message.
         res.status(200).send({
-          message: "Etrans service is not available, try later.",
-          error: config.error[body]
-        });
+          message: "Timeout",
+          id: id
+        }).end();
 
-      }
+      }, 15000);
 
-      // Fallback if request take to much time.
-      else {
-
-        timer[id] = setTimeout(() => {
-
-          // Memory cleanup.
-          delete timer[id];
-
-          // Log.
-          log({
-            now: now,
-            status: "timeout",
-            referer: referer
-          });
-
-          // Drop timeout message.
-          res.status(200).send({
-            message: "Timeout",
-            id: id
-          }).end();
-
-        }, 10000);
-
-      }
-
-    });
+    }
 
   });
 
-  /**
-   * RECEIVED TRANSLATION
-   */
+});
 
-  $.route.post("/rest/etrans/collector", async (req, res) => {
+/**
+ * RECEIVED TRANSLATION
+ */
 
-    let data = [];
+$.route.post("/rest/etrans/collector", async (req, res) => {
 
-    // Stream aggregation data.
-    req.on("data", chunk => data.push(chunk));
+  let data = [];
 
-    // Data fully received.
-    req.on("end", () => {
+  // Stream aggregation data.
+  req.on("data", chunk => data.push(chunk));
 
-      // Decode data.
-      data = Buffer.concat(data).toString('utf8');
+  // Data fully received.
+  req.on("end", () => {
 
-      // Adapt response.
-      let params = {
-        id: req.query.id,
-        data: data,
-        "request-id": req.query["request-id"],
-        "target-language": req.query["target-language"]
-      };
+    // Decode data.
+    data = Buffer.concat(data).toString('utf8');
 
-      // Propagate events.
-      $.trigger("etrans.feedback." + params.id, params);
+    // Adapt response.
+    let params = {
+      id: req.query.id,
+      data: data,
+      "request-id": req.query["request-id"],
+      "target-language": req.query["target-language"]
+    };
 
-    });
-
-    // Reply faster.
-    res.status(200).send("ok");
+    // Propagate events.
+    $.trigger("etrans.feedback." + params.id, params);
 
   });
 
+  // Reply faster.
+  res.status(200).send("ok");
+
+});
+
+/**
+ * DEMO
+ */
+
+$.route.static("/demo/etrans", __dirname + "/demo");
+
+/**
+ * CATCH EVENTS
+ */
+
+$.on('ready', async () => {
+
+  let dev = $.env("MODE");
+  let isDev = dev === "dev";
+
+  if (isDev) {
+
+    // https://betiny.loca.lt
+    const tunnel = await localtunnel({ 
+      subdomain: "betiny",
+      port: 3001,
+      local_https: false,
+      allow_invalid_cert: true,
+      local_host: "betiny.localhost"
+    });
+
+    tunnel.on('error', (e) => {
+      console.log("tunnel error", e);
+    }); 
+
+    tunnel.on('close', () => {
+      console.log("tunnel Close");
+    });  
+
+    tunnelling = tunnel.url;
+
+  }
+
   /**
-   * DEMO
+   * DROP CONSOLE INFO
    */
+      
+  console.log( 
+    $.draw()
+      .space(1).background("yellow")
+      .color("black").text(" ETRANS ").reset()
+      .space(1).icon("top").text("  DEMO")
+      .text("\n").space(10).icon(isDev ? "child" : "end").space(1).color("cyan").underline().text($.server.url('/demo/etrans'))
+      .reset()
+    .finish()  
+  );
 
-  $.route.static("/demo/etrans", __dirname + "/demo");
-
-  /**
-   * CATCH EVENTS
-   */
-
-  $.on('ready', () => {
-
-    console.log(
+  if (isDev) {
+    console.log( 
       $.draw()
-        .space(1).background("yellow").text(" ETRANS ").reset()
-        .space(1).icon("top").text("  DEMO")
-        .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/etrans'))
+        .space(10).icon("pipe")
+        .text("\n").space(10).icon("child").text(" TUNNEL ").color("gray").text("DEV ONLY")
+        .text("\n").space(10).icon("end").space(1).color("cyan").underline().text(tunnelling).reset()
         .text("\n").reset()
-        .finish()  
+      .finish()  
     );
+  } 
 
-    return;
-    
-    request.post({
+  console.log(); 
 
-      url: process.env.ETRANS_URL,
-
-      json: true,
-
-      body: {
-
-        sourceLanguage: "en",
-        targetLanguages: ["fr"],
-        domain: "SPD", // GEN
-
-        callerInformation: {
-          application: 'DIGIT_D1_Webttools_EUWidg_20200612',
-          username: 'Webtools'
-        },
-
-        documentToTranslateBase64: {
-          content: Buffer.from("<p>Happy new year!</p>").toString('base64'),
-          format: "html"
-        },
-
-        destinations: {
-          httpDestinations: [tunnel.url + "/webtools/rest/etrans/collector?id=" + $.id()]
-        }
-
-      },
-
-      auth: {
-        user: process.env.ETRANS_USER,
-        pass: process.env.ETRANS_PASSWORD,
-        sendImmediately: false
-      }
-
-    }, (error, response, body) => {
-
-      if (error) {
-        console.log("ERROR", error.message);
-        return;
-      }
-
-      let responseFrom = response.toJSON();
-
-      // ERROR
-      if (parseInt(body) < 0) {
-        console.log(config.error[body]);
-      }
-      else {
-
-      }
-
-    });
-
-  });
+});

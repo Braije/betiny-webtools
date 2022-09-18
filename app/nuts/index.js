@@ -45,7 +45,8 @@ $.on("ready", () => {
 
     console.log(
         $.draw() 
-          .space(1).background("magenta").text("  NUTS  ").reset()
+          .space(1).background("magenta")
+          .color("white").text("  NUTS  ").reset()
           .space(1).icon("top").text("  DEMO")
           .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/nuts'))
           .text("\n").reset()

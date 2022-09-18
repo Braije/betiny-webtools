@@ -1,5 +1,10 @@
 /**
  * BASE ARCHITECTURE SERVER (POC) - Braije Christophe - July 2018
+ * ██     ██ ███████ ██████  ████████  ██████   ██████  ██      ███████ 
+ * ██     ██ ██      ██   ██    ██    ██    ██ ██    ██ ██      ██      
+ * ██  █  ██ █████   ██████     ██    ██    ██ ██    ██ ██      ███████ 
+ * ██ ███ ██ ██      ██   ██    ██    ██    ██ ██    ██ ██           ██ 
+ *  ███ ███  ███████ ██████     ██     ██████   ██████  ███████ ███████
  */
 
 console.clear();
@@ -12,13 +17,16 @@ require('./app/nuts');
 require('./app/etrans');
 
 // Custom root route.
-$.route.get('/', { alexis: true }, (req, res) => {
+$.route.get('/', (req, res) => {
   res.send("Welcome to Webtools.");
 });
 
 // Self start management.
-$.server.start( () => {
-
+$.server.start( () => { 
+  
+  setTimeout(() => {
+    console.log("");
     $.fire("ready");
+  }, 250)
 
-});
+}); 
