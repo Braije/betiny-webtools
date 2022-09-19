@@ -29,15 +29,12 @@ module.exports = async (params = {}) => {
   /**
    * AT START WE CREATE EACH ITERATION
    * We create an array with all possible case base from import parameters.
-   *
-   * @type {Array}
    */
 
   let available = $.iterate(config.import);
 
   /**
    * ARGUMENTS
-   * TODO: Improve this part :-)
    */
 
   let args = Object.keys(params);
@@ -74,7 +71,6 @@ module.exports = async (params = {}) => {
   /**
    * GET GEOJSON AS STREAM
    * Get any geojson file as stream and showing a progress bar.
-   * TODO: Generic?
    *
    * @param parameters
    * @returns {Promise}
@@ -98,13 +94,13 @@ module.exports = async (params = {}) => {
       if (params.store) {
 
         // Build store path.
-        let storePath = path.resolve($.env("TEMP_PATH") + "/" + params.store + "/");
+        let storePath = path.resolve($.env("ROOT_PATH") + "/temp/" + params.store + "/");
 
         // Check store path.
         try {
 
           // Create store path.
-          await $.folder.create(storePath);
+          await $.file.create(storePath);
 
         }
         catch (error) {
@@ -256,9 +252,20 @@ module.exports = async (params = {}) => {
     let content = await getDataStream({
       url: url,
       store: 'nuts',
-      loading: "      \033[90m├─\033[33m CENTROID\033[0m\t"  +  url.split('/').pop() + "\033[90m\t|\033[32m {pourcent}% \033[90m ({total}) \033[0m"
-    }).catch(() => {
-      console.log("    \033[90m└─\033[31m This url is not valid \033[0m", url);
+      loading: $.draw()
+        .space(5).icon("child").color("yellow").text(" CENTROID").reset()
+        .text("\t").text( url.split('/').pop() )
+        .text("\t").icon("pipe").color("green").text(" {pourcent}%")
+        .color("gray").text(" ({total})")
+      .finish()
+    }).catch((e) => {
+      console.log(
+        $.draw()
+          .space(5).icon("end").color("red").text(" " + e.message)
+          .text("\n")
+          .space(8).color("gray").text(url + "\n")
+          .finish()
+      );
       process.exit();
     });
 
@@ -323,9 +330,20 @@ module.exports = async (params = {}) => {
     let content = await getDataStream({
       url: url,
       store: 'nuts',
-      loading: "      \033[90m├─\033[33m COUNTRIES\033[0m\t"  +  url.split('/').pop() + "\033[90m\t|\033[32m {pourcent}% \033[90m ({total}) \033[0m"
-    }).catch( msq => {
-      console.log(msq || "      \033[90m├─\033[31m This url is not valid \033[0m" + url);
+      loading: $.draw()
+      .space(5).icon("child").color("yellow").text(" COUNTRIES").reset()
+      .text("\t").text( url.split('/').pop() )
+      .text("\t").icon("pipe").color("green").text(" {pourcent}%")
+      .color("gray").text(" ({total})")
+    .finish()
+    }).catch(e => {
+      console.log(
+        $.draw()
+          .space(5).icon("end").color("red").text(" " + e.message)
+          .text("\n")
+          .space(8).color("gray").text(url + "\n")
+          .finish()
+      );
       process.exit();
     });
 
@@ -437,11 +455,19 @@ module.exports = async (params = {}) => {
       let content = await fs.promises.readFile(url + ".geojson", 'utf8').catch(() => {
         console.log("      \033[90m├─\033[31m " + cat + " " + cntr.toUpperCase() + "-\033[0m" + path.basename(url));
         process.exit();
-        return false;
       });
 
       if (content) {
-        console.log("      \033[90m├─\033[32m " + cat + " " + cntr.toUpperCase() + "-\033[0m\t" + path.basename(url) + ".geojson");
+
+        console.log(
+          $.draw()
+            .space(5).icon("child").color("cyan")
+            .text(" " + cat + " ")
+            .text(cntr.toUpperCase() + "-")
+            .text("\t").color("gray").text(path.basename(url)).text(".geojson")
+            .reset()
+            .finish()
+        );
 
         let features = JSON.parse(content).features;
 
@@ -465,12 +491,11 @@ module.exports = async (params = {}) => {
      */
 
     // $.log(params.year, params.precision, params.level, params.projection);
-    // console.log("\033[90m----------------------------------------\033[0m");
 
     let centroid = await getLabel(params);
 
     if (!centroid || Object.keys(centroid).length === 0) {
-      console.log("    \033[90m└─\033[32m ERROR\033[90m\t ", "Centroid :( \033[0m");
+      //console.log("    \033[90m└─\033[32m ERROR\033[90m\t ", "Centroid :( \033[0m");
       process.exit();
       return;
     }
@@ -478,7 +503,7 @@ module.exports = async (params = {}) => {
     let countries = await getCountries(params);
 
     if (!countries || countries.length === 0) {
-      console.log("    \033[90m└─\033[32m ERROR\033[90m\t ", "Countries :( \033[0m");
+      //console.log("    \033[90m└─\033[32m ERROR\033[90m\t ", "Countries :( \033[0m");
       process.exit();
       return;
     }
@@ -498,7 +523,15 @@ module.exports = async (params = {}) => {
       let pt = await getLocal("pt");
       pt.forEach(feat => alignFeature(feat, "PT-"));
 
-      console.log("      \033[90m├─\033[32m BOUND KS \033[31m\tNOT AVAILABLE \033[0m");
+      console.log(
+        $.draw()
+          .space(5).icon("child").color("gray")
+          .text(" BOUND KS ")
+          .text("\t").color("gray").text("NOT APPLICABLE")
+          .reset()
+          .finish()
+      );
+
     }
 
     // NUTS
@@ -524,17 +557,23 @@ module.exports = async (params = {}) => {
      * FEATURES STATS
      */
 
-    //console.log("\033[90m----------------------------------------\033[0m");
-    console.log("      \033[90m├─\033[32m NBR FEATURES:\033[0m ", count);
-    console.log("      \033[90m├─\033[32m NBR COUNTRIES:\033[0m", countriesLength);
-    //console.log(featuresFamily);
+    console.log(
+      $.draw()
+        .space(5).icon("child").color("cyan").text(" NRB FEATURES\t")
+        .color("yellow").text(count)
+        .finish()
+    );
+    console.log(
+      $.draw()
+        .space(5).icon("child").color("cyan").text(" NRB COUNTRIES\t")
+        .color("yellow").text(countriesLength)
+        .text("\n").space(5).icon("pipe")
+        .finish()
+    );
 
     /**
      * CREATE THE PROCESS QUEUE
      */
-
-    // console.log("\033[90m----------------------------------------\033[0m");
-    $.log();
 
     let loop = 0;
 
@@ -578,13 +617,24 @@ module.exports = async (params = {}) => {
 
             process.stdout.cursorTo(0);
             process.stdout.clearLine();
-            process.stdout.write("      \033[90m└─\033[32m INSERT:\033[0m \t" + properties.CNTR_ID + " (" + loop + "/" + countriesLength + ")");
+            process.stdout.write(
+              $.draw()
+                .space(5).icon("end").color("yellow").text(" INSERT:\t\t")
+                .reset().text(properties.CNTR_ID)
+                .text(" (" + loop + " / " + countriesLength + ")")
+                .finish()
+            );
 
           }).catch( error => {
 
             process.stdout.cursorTo(0);
             process.stdout.clearLine();
-            process.stdout.write("      \033[90m└─\033[32m INSERT:\033[0m \t" + properties.CNTR_ID);
+            process.stdout.write(
+              $.draw()
+                .space(5).icon("end").color("red").text(" INSERT:\t\t")
+                .reset().text(properties.CNTR_ID)
+                .finish()
+            );
 
           });
 
@@ -600,15 +650,28 @@ module.exports = async (params = {}) => {
             id
           ]).then( () => {
 
-            process.stdout.cursorTo(0);
-            process.stdout.clearLine();
-            process.stdout.write("      \033[90m└─\033[33m UPDATE:\033[0m \t" + properties.CNTR_ID + " (" + loop + "/" + count + ")");
+            // process.stdout.cursorTo(0);
+            // process.stdout.clearLine();
+            // process.stdout.write
+
+            process.stdout.write(
+              $.draw()
+                .space(5).icon("end").color("yellow").text(" UDPATE:\t\t")
+                .reset().text(properties.CNTR_ID)
+                .text(" (" + loop + " / " + count + ")")
+                .finish()
+            );
 
           }).catch( () => {
 
             process.stdout.cursorTo(0);
             process.stdout.clearLine();
-            process.stdout.write("      \033[90m└─\033[33m UPDATE:\033[0m \t" + properties.CNTR_ID);
+            process.stdout.write(
+              $.draw()
+                .space(5).icon("end").color("red").text(" UPDATE:\t\t")
+                .reset().text(properties.CNTR_ID)
+                .finish()
+            );
 
           });
           /* */
@@ -620,7 +683,14 @@ module.exports = async (params = {}) => {
 
       // ERROR.
       }).catch( error => {
-        console.log("      \033[90m└─\033[31m ERROR:\033[0m ", error);
+
+        console.log(
+          $.draw()
+          .space(5).icon("end").color("red").text(" ERROR:\t\t")
+          .reset().text(error)
+          .finish()
+        );
+
       });
 
       delete what[Object.keys(what)[0]];
@@ -637,13 +707,12 @@ module.exports = async (params = {}) => {
 
     // Create the queue array base family group.
     (Object.keys(featuresFamily)).forEach((cntr_id) => {
-      myCountriesQueue.push( async data => {
+      myCountriesQueue.add( async data => {
         return await processDB(data || featuresFamily);
       })
     });
 
     myCountriesQueue.execute( () => {
-      // console.log("\n\033[90m----------------------------------------\033[0m");
       if (typeof callback === 'function') {
         callback();
       }
@@ -661,20 +730,25 @@ module.exports = async (params = {}) => {
     // Hide terminal cursor.
     process.stderr.write('\x1B[?25l');
 
-    //console.log("\033[90m----------------------------------------\033[0m");
-    //console.log("\033[32m IMPORT GEOJSON \033[0m");
-    //console.log("\033[90m----------------------------------------\033[0m");
-
     // First, check if tables exist.
     let tables = await $.mysql('nuts').query("SHOW TABLES LIKE 'geojson'");
 
     // If not exist.
     if (tables.length === 0) {
-      $.log("\033[31mGEOJSON\033[0m\t", "FAILED, run install command first.");
+
+      console.log(
+        $.draw()
+          .text("\n")
+          .space(4).background("red").text(" GEOJSON ").reset()
+          .text("\n").space(5).icon("top")
+          .text("\n").space(5).icon("end").color("gray").text(" Install your database first.")
+          .text("\n").space(7).color("white").text(" yarn start nuts:install\n")
+          .reset()
+          .finish()
+      );
+
       process.exit();
-    }
-    else {
-      $.log("\033[32mGEOJSON\033[0m\t", "OK");
+
     }
 
     /**
@@ -692,7 +766,6 @@ module.exports = async (params = {}) => {
       iterations.shift();
 
       if (!entry) {
-        //console.log("\033[90m----------------------------------------\033[0m");
         console.log("\n");
         console.timeEnd("Import geojson");
 
@@ -704,10 +777,17 @@ module.exports = async (params = {}) => {
       }
 
       // Log info.
-      console.log("\n");
-      $.log("\033[32mJOB\033[0m\t      ", count, "/", total);
-      //$.log("\033[32mPARAMS\033[0m\t\t", entry);
-      $.log("");
+      console.log(
+        $.draw()
+          .text("\n\n")
+          .space(4).background("cyan").text(" JOB ").reset()
+          .text("\t\t").color("yellow").text("" + count).color("gray").text(" / ").text(total + " ") 
+          .reset()
+          .text("\n")
+          .space(5).icon("top")
+          .reset()
+          .finish()
+      );
 
       count++;
 

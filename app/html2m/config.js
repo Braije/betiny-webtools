@@ -30,7 +30,7 @@ module.exports = {
     browserPath: "",
 
     // Store temp files to this folder (no / at the end).
-    folder: process.env.TEMP_PATH + "/html2m",
+    folder: process.env.ROOT_PATH + "/temp/html2m",
 
     // delete files older than 7 days
     filesDeletionAge: 1

@@ -354,32 +354,22 @@ $.on("betiny:server:start", async () => {
     process.exit();
   }
 
-  /**
-   * TAKE ADVANTAGE TO CLEAN UP CACHE FOLDER
-   */
+});
 
-  /* TODO: Centralize auto clean up or cron process.
-  $.cleanFolder(config.folder, {
-    days: config.filesDeletionAge
-  });
-  /* */
+/**
+ * DROP MESSAGE INFO
+ */
 
-  /**
-   * DROP MESSAGE INFO
-   */
+$.on("ready", () => {
 
-  $.on("ready", () => {
-
-    console.log(
-      $.draw()
-        .space(1).background("green")
-        .color("black").text(" HTML2M ").reset()
-        .space(1).icon("top").text("  DEMO")
-        .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
-        .text("\n").reset()
-        .finish()  
-    );
-    
-  });
-
+  console.log(
+    $.draw()
+      .space(1).background("green")
+      .color("black").text(" HTML2M ").reset()
+      .space(1).icon("top").text("  DEMO")
+      .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
+      .text("\n").reset()
+      .finish()  
+  );
+  
 });

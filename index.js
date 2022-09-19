@@ -21,12 +21,10 @@ $.route.get('/', (req, res) => {
   res.send("Welcome to Webtools.");
 });
 
-// Self start management.
-$.server.start( () => { 
-  
-  setTimeout(() => {
-    console.log("");
-    $.fire("ready");
-  }, 250)
 
+
+
+// Self start management.
+$.server.start(() => {
+  $.fire("ready");
 }); 

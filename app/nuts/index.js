@@ -41,6 +41,10 @@ $.route.get("/rest/nuts*", nutsService);
 
 $.route.static("/demo/nuts", __dirname + "/demo");
 
+/**
+ * CUSTOM DROP MESSAGE ON START
+ */
+
 $.on("ready", () => {
 
     console.log(
