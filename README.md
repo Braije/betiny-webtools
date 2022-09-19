@@ -23,3 +23,7 @@ Yeahh webtools implementation using [betiny-core](https://github.com/Braije/beti
     MYSQL_PASSWORD=
     MYSQL_CONNECTION_LIMIT=100
     MYSQL_DATABASE=betiny
+
+    ETRANS_URL=
+    ETRANS_USER=
+    ETRANS_PASSWORD=
