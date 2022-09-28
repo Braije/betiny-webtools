@@ -40,6 +40,9 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   let urlAddress = "";
   let inputName;
+  let observer;  
+  let isReady;
+  let timer; 
 
   /**
    * Validate URL || HTML.
@@ -242,71 +245,191 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   });
 
   // Load page into browser.
-  await page.goto(urlAddress, {
-    waitUntil: "networkidle0"
+  await page.goto(urlAddress);
+
+  /**
+   * Manage lazy loading image.
+   */
+
+  await page.evaluate(() => { 
+
+    // Reflow any lazy loading image.
+    [].forEach.call(document.querySelectorAll('img[loading="lazy"]'), img => {
+        img.removeAttribute("loading");
+        img.src = img.src;
+    });
+
   });
 
-  // Implement print to pdf if output extension is pdf.
-  await page.waitForTimeout(parseInt(loadDelay));
+  /**
+   * NETWORK AND DOM CHANGE
+   */
 
-  let outputFileName = "html2m_" + $.id() + "." + outputType;
+  const fallback = setTimeout(async () => {
+    await browser.close();
+    res.status(500).send({
+      wtstatus: {
+        success: 0,
+        status: "Timeout"
+      }
+    })
+  }, 15000);
 
-  if (outputType === "pdf") {
+  const validate = () => {
+    isReady = true;
+    $.fire("isIdle");
+  };
 
-    await page.pdf({
+  const checkNetwork = () => {
+    clearTimeout(timer);
+    timer = setTimeout(validate, 2000);
+  };
+
+  // Inject method to check if dom is still changed.
+  await page.exposeFunction('checkDom', () => {
+          
+    if (isReady) {
+      return;
+    }
+
+    clearTimeout(timer);
+    timer = setTimeout(validate, 1000);
+
+  });
+
+  await page.on('request', checkNetwork);
+
+  // Wait until all is ok.
+  await page.evaluate(() => { 
+    // Create an observer instance linked to the callback function.
+    observer = new MutationObserver(checkDom);
+
+    // Start observing the target node for configured mutations.
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+  });
+
+  /**
+   * SCREENSHOT 
+   */
+
+  const screenshot = async () => {
+
+    clearTimeout(fallback);
+
+    // Implement print to pdf if output extension is pdf.
+    await page.waitForTimeout(parseInt(loadDelay));
+
+    let outputFileName = "html2m_" + $.id() + "." + outputType;
+
+    let options = {
       path: config.folder + '/' + outputFileName,
       landscape: landscape,
       format: format,
       printBackground: background,
       margin: margin
-    })
-    .catch( () => {
-      res.status(500).send({
-        wtstatus: {
-          success: 0,
-          status: "PDF error"
-        }
-      })
-    })
-
-  }
-
-  else {
-
-    const screenshotOptions = {
-      path: config.folder + '/' + outputFileName,
-      fullPage: true,
-      type: outputType,
-      omitBackground: !background
     };
 
-    // Add image quality if the requested file format is .jpg.
-    if (outputType === "jpg") {
-      screenshotOptions.quality = config.imageQuality;
+    /**
+     * HEADER AND FOOTER
+     */
+
+    if (query.header_footer === 'true') {
+
+      let header = `
+        <div class="content" style="font-size: 10px; width: 100%; display: inline-block; margin: 0px 15px;">
+            <span class="date" style="float: left"></span>
+            <span class="title" style="float: right"></span>
+        </div>
+      `;
+      let footer = `
+        <div class="content" style="font-size: 10px; width: 100%; display: inline-block; margin: 0px 15px;">
+          <span class="url" style="float: left"></span>
+          <span class="pageNumber" style="float: right"></span>
+        </div>
+      `;
+
+      options = { ...options, ...{
+        displayHeaderFooter: true,
+        headerTemplate: header,
+        footerTemplate: footer,
+        margin: {
+          top: '40px',
+          bottom: '40px',
+        }
+      }};
+
     }
 
-    // Print screen.
-    await page.screenshot(screenshotOptions).catch( error => {
-      browser.close();
-      res.status(500).send({
-        wtstatus: {
-          success: 0,
-          status: "Screenshot error"
-        }
-      })
-    })
+    /**
+     * TO PDF
+     */
 
+    if (outputType === "pdf") {
+
+      await page.pdf(options).catch(async () => {
+
+        await browser.close();
+
+        res.status(500).send({
+          wtstatus: {
+            success: 0,
+            status: "PDF error"
+          }
+        });
+
+      })
+
+    }
+
+    /**
+     * TO IMAGE
+     */
+
+    else {
+
+      const screenshotOptions = {
+        path: config.folder + '/' + outputFileName,
+        fullPage: true,
+        type: outputType,
+        omitBackground: !background
+      };
+
+      // Add image quality if the requested file format is .jpg.
+      if (outputType === "jpg") {
+        screenshotOptions.quality = config.imageQuality;
+      }
+
+      // Print screen.
+      await page.screenshot(screenshotOptions).catch( error => {
+        browser.close();
+        res.status(500).send({
+          wtstatus: {
+            success: 0,
+            status: "Screenshot error"
+          }
+        })
+      })
+
+    }
+
+    await browser.close();
+
+    res.send({
+      wtstatus: {
+        success: 1,
+        status: "JSON retrieved successfully",
+        output: $.server.url("/rest/html2m/output/" + outputFileName)
+      }
+    });
+
+  };
+
+  if (query.html) {
+    return screenshot();
   }
 
-  await browser.close();
-
-  res.send({
-    wtstatus: {
-      success: 1,
-      status: "JSON retrieved successfully",
-      output: $.server.url("/rest/html2m/output/" + outputFileName)
-    }
-  })
+  // When is idle, we can make a screenshot.
+  $.on("isIdle", screenshot);
 
 });
 
