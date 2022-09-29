@@ -15,6 +15,42 @@ const puppeteer = require("puppeteer");
 const config = require('./config.js');
 
 /**
+ * DELETE FILES
+ * Delete files based on date creation properties.
+ * 
+ * TODO: Re-usable method to delete files based on folder and date range
+ * TODO: Manage folder start with or without / at start
+ * TODO: Manage the "/" of folder at the end
+ * TODO: Manage Number value of days parameters etc..
+ */
+
+const cleanUpFilesInFolder = (config = {}) => {
+
+  let params = { ...{
+    folder: "temp/html2m/",
+    days: 1,
+    hours: 1,
+    mins: 1,
+    secs: 1
+  }, ...config};
+
+  // Where.
+  let html2mRead = $.file.read(params.folder);
+    
+  // Filter by date.
+  html2mRead.files.filter(file => {
+    let { creation } = $.file.stats(params.folder + file);
+    let diff = (1 * 8 * 60 * 60 * 1000);
+    return (diff > (new Date() - creation));
+  
+  // Delete.  
+  }).map(file => {
+    $.file.delete(params.folder + file);
+  });
+
+};
+
+/**
  * CONVERT (POST)
  */
 
@@ -414,6 +450,12 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
     await browser.close();
 
+    // Auto-cleanyp old files
+    cleanUpFilesInFolder({
+      folder: "temp/html2m/"
+    });
+
+    // Response.
     res.send({
       wtstatus: {
         success: 1,
@@ -494,5 +536,5 @@ $.on("ready", () => {
       .text("\n").reset()
       .finish()  
   );
-  
+
 });
