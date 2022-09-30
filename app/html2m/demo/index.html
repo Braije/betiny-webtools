@@ -3,55 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="tailwindcss.js"></script>
 </head>
-<body>
+<body class="p-8">
+<style>
+    p span {
+        width: 100px;
+        font-weight: bold;
+    }
+</style>
+<h1 class="text-2xl pb-4">Html2m - test page</h1>
 
-<h1>Test html2m</h1>
-
-<form action="/rest/html2m/convert" method="post">
-
-    <p>
-        <b>Format</b>
-        <select name="format">
-            <option value="Letter">Letter</option>
-            <option value="Legal">Legal</option>
-            <option value="Tabloid">Tabloid</option>
-            <option value="Ledger">Ledger</option>
-            <option value="A0">A0</option>
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="A3">A3</option>
-            <option value="A4">A4</option>
-            <option value="A5">A5</option>
-            <option value="A6">A6</option>
-        </select>
-    </p>
-
-<!--p>
-<b>HTML</b>.
+<div class="flex flex-wrap gap-6">
+    
+<form action="/rest/html2m/convert" method="post" class="flex-1 flex flex-col gap-4 p-8"
+    style="border: 5px dashed #ccc;"
+>
+<p class="flex items-center gap-4">
+    <span>FORMAT</span>
+    <select class="flex-grow border border-gray-400 p-2 rounded shadow" name="format">
+        <option value="Letter">Letter</option>
+        <option value="Legal">Legal</option>
+        <option value="Tabloid">Tabloid</option>
+        <option value="Ledger">Ledger</option>
+        <option value="A0">A0</option>
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="A3">A3</option>
+        <option value="A4">A4</option>
+        <option value="A5">A5</option>
+        <option value="A6">A6</option>
+    </select>
 </p>
-<textarea name="html" cols="80" rows="10">
+<p class="flex items-center gap-4">
+<span>URL</span>
+<select class="border border-gray-400 p-2 rounded shadow" name="url">
+    <option value="http://webtools.europa.eu/gitignored/html2m/">
+        static lazy loading
+    </option>
+    <option value="https://shared:ec2018@grow-sms.acc.fpfis.tech.ec.europa.eu/governance-tools/solvit_en">
+        Heavy page with lot of network / dom change.
+    </option>
+    <option value="http://webtools.europa.eu/gitignored/html2m/coucou.html">
+        coucou
+    </option>
+    <option value="https://ec:europa2020!@webgate.acceptance.ec.europa.eu/d/grow/atof/en/financial-intermediaries?shs_term_node_tid_depth=1275&field_type_of_finance_tid_i18n=2104&field_investment_focus_tid_i18n%5B%5D=2395&field_investment_focus_tid_i18n%5B%5D=1875&field_investment_focus_tid_i18n%5B%5D=1874&field_max_amount_finance_euro_value=All&field_min_amount_finance_euro_value=All&field_company_category_tid_i18n=All&field_implementing_partner_tid=All&combine=&outermost=">
+        lazy load heavy
+    </option>
+</select>
+</p>
+
+<p class="flex items-center gap-4">
+    <span>OUTPUT</span>
+    <input class="border" type="radio" name="output_format" value="jpg" checked> JPG
+    <input class="border" type="radio" name="output_format" value="pdf"> PDF
+</p>
+<p class="flex items-center gap-4">
+    <span>OPTIONS</span>
+    <input type="checkbox" name="header_footer" value="true"> header_footer
+</p>
+<p class="flex items-center mt-4 gap-4">
+    <span></span>
+    <input class="border 
+        p-2 px-4 rounded 
+        text-white 
+        bg-blue-600" type="submit">
+</p>
+</form>
+
+<form action="/rest/html2m/convert" method="post" class="flex-1 flex flex-col gap-4 p-8"
+    style="border: 5px dashed #ccc;"
+>
+<p class="flex items-center gap-4">
+    <span>FORMAT</span>
+    <select class="flex-grow border border-gray-400 p-2 rounded shadow" name="format">
+        <option value="Letter">Letter</option>
+        <option value="Legal">Legal</option>
+        <option value="Tabloid">Tabloid</option>
+        <option value="Ledger">Ledger</option>
+        <option value="A0">A0</option>
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="A3">A3</option>
+        <option value="A4">A4</option>
+        <option value="A5">A5</option>
+        <option value="A6">A6</option>
+    </select>
+</p>
+<p class="flex gap-4">
+<span>HTML</span>
+<textarea class="flex-grow border border-gray-400 p-2 rounded shadow" 
+name="html" rows="5">
 sdfqsdfqsdfd qùdmlfk qdsmlfk
-</textarea-->
-
-<p>
-<b>URL</b>
+</textarea>
 </p>
-<input name="url" value="http://webtools.europa.eu/gitignored/html2m/">
-
-  <p>OUTPUT</p>
-  <input type="radio" name="output_format" value="jpg" checked> JPG
-  <input type="radio" name="output_format" value="pdf"> PDF
-
-  <p>Header and footer</p>
-  <input type="checkbox" name="header_footer" value="true"> header_footer
-  
-    <p>
-        <input type="submit">
-    </p>
-
+<p class="flex items-center gap-4">
+    <span>OUTPUT</span>
+    <input class="border" type="radio" name="output_format" value="jpg" checked> JPG
+    <input class="border" type="radio" name="output_format" value="pdf"> PDF
+</p>
+<p class="flex items-center gap-4">
+    <span>OPTIONS</span>
+    <input type="checkbox" name="header_footer" value="true"> header_footer
+</p>
+<p class="flex items-center mt-4 gap-4">
+    <span></span>
+    <input class="border 
+        p-2 px-4 rounded 
+        text-white 
+        bg-blue-600" type="submit">
+</p>
 
 </form>
+
+</div>
 
 </body>
 </html>

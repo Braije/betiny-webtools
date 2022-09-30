@@ -40,15 +40,26 @@ const cleanUpFilesInFolder = (config = {}) => {
   // Filter by date.
   html2mRead.files.filter(file => {
     let { creation } = $.file.stats(params.folder + file);
-    let diff = (1 * 8 * 60 * 60 * 1000);
-    return (diff > (new Date() - creation));
+    let range = (1 * 24 * 60 * 60 * 1000);
+    let diff = (new Date() - creation);
+    let shouldBeDelete = (range < diff);
+    return (range < diff && (diff > 1000)) ;
   
   // Delete.  
   }).map(file => {
+    console.log(
+      $.draw()
+        .space(1)
+        .background("red").color("white").text(' CLEANUP ').reset()
+        .space(2).text(file)
+        .finish()
+    );
     $.file.delete(params.folder + file);
   });
 
 };
+
+// setTimeout(cleanUpFilesInFolder, 2000);
 
 /**
  * CONVERT (POST)
@@ -79,6 +90,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   let observer;  
   let isReady;
   let timer; 
+  let count = 0;
 
   /**
    * Validate URL || HTML.
@@ -213,7 +225,9 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   else if (query.html) {
 
-    let data = query.html;
+    let data = query.html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'')  
+      .replace(/(\b)(on\S+)(\s*)=|javascript:|(<\s*)(\/*)script/ig, '');
 
     // Generate the html page.
     inputName = "html2m_" + $.id() + ".html";
@@ -250,6 +264,15 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
     browserArgs.push("--proxy-server=" + $.env('PROXY_HOST') );
   }
 
+  console.log(
+    $.draw()
+      .space(1).background("green")
+      .color("black").text(" HTML2M ").reset()
+      .space(1).icon("top")
+      .text("\n").space(10).icon("child").space(1).text("REQUEST")
+      .reset().finish()  
+  );
+
   /**
    * RUN PUPETTEER.
    */
@@ -258,14 +281,22 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
     executablePath: config.browserPath,
     args: browserArgs,
     ignoreHTTPSErrors: true
+    // Give details about what's happen in the browser page.
+    //, dumpio: true
   });
+
+  const terminate = async () => {
+    if (browser && browser.process() != null) {
+      await browser.process().kill('SIGINT');
+    }
+  }
 
   const page = await browser.newPage();
 
   // Disable Javascript.
-  if (query.html) {
-    page.setJavaScriptEnabled(false);
-  }
+  //if (query.html) {
+    // page.setJavaScriptEnabled(false);
+  //}
 
   if ($.env("PROXY", 0) === "1") {
     await page.authenticate({
@@ -283,10 +314,16 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   // Load page into browser.
   await page.goto(urlAddress);
 
-  /**
-   * Manage lazy loading image.
-   */
+  console.log(
+    $.draw()
+      .space(10).icon("pipe").space(1).color("cyan")
+      .space(1).underline().text(urlAddress).reset()
+      .reset()
+      .text("\n").space(10).icon("pipe")
+      .finish()  
+  );
 
+  // Manage lazy loading image.
   await page.evaluate(() => { 
 
     // Reflow any lazy loading image.
@@ -297,59 +334,55 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   });
 
-  /**
-   * NETWORK AND DOM CHANGE
-   */
-
   const fallback = setTimeout(async () => {
-    await browser.close();
+
+    await terminate();
+
     res.status(500).send({
       wtstatus: {
         success: 0,
         status: "Timeout"
       }
     })
+
   }, 15000);
 
-  const validate = () => {
-    isReady = true;
-    $.fire("isIdle");
-  };
+  const check = (tmp = 3000) => {
 
-  const checkNetwork = () => {
     clearTimeout(timer);
-    timer = setTimeout(validate, 2000);
-  };
 
-  // Inject method to check if dom is still changed.
-  await page.exposeFunction('checkDom', () => {
-          
     if (isReady) {
       return;
     }
 
-    clearTimeout(timer);
-    timer = setTimeout(validate, 1000);
+    process.stdout.write(
+      $.draw()
+        .space(10).icon("child").space(1)
+          .text("WAIT").space(1).color("yellow")
+          .text(count++).text("\r").reset().finish()  
+    );
 
-  });
+    timer = setTimeout(() => {
+      isReady = true;
+      $.fire("isIdle");
+    }, tmp);
 
-  await page.on('request', checkNetwork);
-
-  // Wait until all is ok.
-  await page.evaluate(() => { 
-    // Create an observer instance linked to the callback function.
-    observer = new MutationObserver(checkDom);
-
-    // Start observing the target node for configured mutations.
-    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
-  });
-
-  /**
-   * SCREENSHOT 
-   */
-
+  };
+ 
   const screenshot = async () => {
 
+    console.log(
+      $.draw()
+        .text("\n").space(10).icon("pipe")
+        .text("\n").space(10).icon("child")
+        .space(1).text("SCREENSHOT")
+        .reset().finish()  
+    );
+
+    // Remove event listener from process.
+    $.off("isIdle", screenshot);
+
+    // Remove fallback.
     clearTimeout(fallback);
 
     // Implement print to pdf if output extension is pdf.
@@ -404,7 +437,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
       await page.pdf(options).catch(async () => {
 
-        await browser.close();
+        await terminate();
 
         res.status(500).send({
           wtstatus: {
@@ -437,23 +470,33 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
       // Print screen.
       await page.screenshot(screenshotOptions).catch( error => {
-        browser.close();
+
         res.status(500).send({
           wtstatus: {
             success: 0,
             status: "Screenshot error"
           }
         })
+
       })
 
     }
 
-    await browser.close();
+    console.log(
+      $.draw()
+        .space(10).icon("pipe").space(1).color("cyan")
+        .space(1).underline().text($.server.url("/rest/html2m/output/" + outputFileName)).reset()
+        .text("\n").space(10).icon("pipe").space(1)
+        .text("\n").space(10).icon("end").space(1).text("DONE")
+        .text("\n").reset().finish()  
+    );
 
-    // Auto-cleanyp old files
+    // Auto-cleanup old files
     cleanUpFilesInFolder({
       folder: "temp/html2m/"
     });
+
+    await terminate();
 
     // Response.
     res.send({
@@ -466,12 +509,26 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   };
 
-  if (query.html) {
-    return screenshot();
-  }
+  // Inject method to check if dom is still changed.
+  await page.exposeFunction('checkDom', () => check(2000));
+
+  // Wait until all is ok.
+  await page.evaluate(() => { 
+    // Create an observer instance linked to the callback function.
+    observer = new MutationObserver(checkDom);
+
+    // Start observing the target node for configured mutations.
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+  });
 
   // When is idle, we can make a screenshot.
   $.on("isIdle", screenshot);
+
+  // Survey all network request.
+  await page.on('request', () => check(3000));
+  
+  // Fallback for static page.
+  check(1000);
 
 });
 
@@ -535,6 +592,34 @@ $.on("ready", () => {
       .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
       .text("\n").reset()
       .finish()  
+  );
+
+  return;
+
+  console.log(
+    $.draw()
+      .space(1).background("green")
+      .color("black").text(" HTML2M ").reset()
+      .space(1).icon("top")
+      
+      .text("\n").space(10).icon("child").space(1).text("REQUEST")
+      .text("\n").space(10).icon("pipe").space(1).color("cyan")
+      .space(1).underline().text($.server.url('/demo/html2m')).reset()
+      .text("\n").space(10).icon("pipe").space(1)
+
+      .text("\n").space(10).icon("child").space(1)
+        .text("ABORT").space(1).color("yellow")
+        .text(6).reset()
+
+      .text("\n").space(10).icon("pipe").space(1)
+      .text("\n").space(10).icon("child").space(1)
+        .text("SCREENSHOT")
+      .text("\n").space(10).icon("pipe").space(1).color("cyan")
+      .space(1).underline().text($.server.url('/demo/html2m')).reset()
+      
+      .text("\n").space(10).icon("pipe").space(1)
+      .text("\n").space(10).icon("end").space(1).text("DONE")
+        .text("\n").reset().finish()  
   );
 
 });
