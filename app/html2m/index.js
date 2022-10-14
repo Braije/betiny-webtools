@@ -594,32 +594,4 @@ $.on("ready", () => {
       .finish()  
   );
 
-  return;
-
-  console.log(
-    $.draw()
-      .space(1).background("green")
-      .color("black").text(" HTML2M ").reset()
-      .space(1).icon("top")
-      
-      .text("\n").space(10).icon("child").space(1).text("REQUEST")
-      .text("\n").space(10).icon("pipe").space(1).color("cyan")
-      .space(1).underline().text($.server.url('/demo/html2m')).reset()
-      .text("\n").space(10).icon("pipe").space(1)
-
-      .text("\n").space(10).icon("child").space(1)
-        .text("ABORT").space(1).color("yellow")
-        .text(6).reset()
-
-      .text("\n").space(10).icon("pipe").space(1)
-      .text("\n").space(10).icon("child").space(1)
-        .text("SCREENSHOT")
-      .text("\n").space(10).icon("pipe").space(1).color("cyan")
-      .space(1).underline().text($.server.url('/demo/html2m')).reset()
-      
-      .text("\n").space(10).icon("pipe").space(1)
-      .text("\n").space(10).icon("end").space(1).text("DONE")
-        .text("\n").reset().finish()  
-  );
-
 });

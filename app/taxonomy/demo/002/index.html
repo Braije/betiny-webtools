@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//europa.eu/webtools/load.js"></script>
+    <script src="taxonomy.js"></script>
+    <link href="base.css" rel="stylesheet">
+    <link href="taxonomy.css" rel="stylesheet">
+</head>
+<body style="padding: 40px;">
+
+<h1>Taxonomy POC</h1>
+
+<p>Experimental component to manage terms.</p>
+<div style="padding: 40px; margin: 20px 0; border: 5px dashed #eee;">
+<input type="text" id="taxonomy" value="2442, 2836, 6400">
+</div>
+
+<pre>
+&lt;input type="text" name="xxx" id="taxonomy" value="">
+</pre>
+<p>UEC</p>
+<pre>{
+    "service" : "taxonomy",
+    "field" : "#taxonomy"
+}</pre>
+
+<script>
+
+    // Mimic SML loading process.
+    window.addEventListener('wtReady', function () {
+
+      var obj = document.createElement("div");
+
+      obj.params = {
+        "service" : "taxonomy",
+        "field" : "#taxonomy"
+      };
+
+      $wt.taxonomy.run(obj);
+
+    });
+
+</script>
+
+<p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p>
+<p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p>
+<p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p>
+<p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p><p>Loremp ...</p>
+
+</body>
+</html>
