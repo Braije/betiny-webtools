@@ -1,7 +1,7 @@
 
 $wt.taxonomy = {
 
-  run: function (obj) {
+  run: (obj) => {
 
     /**
      * REFERENCE
@@ -13,7 +13,7 @@ $wt.taxonomy = {
      * MANDATORY
      */
 
-    var field = document.querySelector(obj.params.field);
+    const field = document.querySelector(obj.params.field);
 
     if (!field) {
       $wt.next(obj);
@@ -22,38 +22,44 @@ $wt.taxonomy = {
     }
 
     field.setAttribute("readonly", true);
-    field.style.display = "none";
+    //field.style.display = "none";
 
     /**
      * REFERENCES
      */
 
-    var terms = [];
+    let terms = [];
 
     /**
      * UI
      */
 
-    var container = document.createElement("div");
-    container.className = "wt-taxonomy unselected";
+    let id = "modal_" + $wt.id();
 
+    // Input fake.
+    let container = document.createElement("div");
+    container.className = "wt-taxonomy unselected";
     $wt.after(container, field);
 
-    var modal = document.createElement("div");
+    // Modal.
+    let modal = document.createElement("div");
     modal.className = "wt-taxonomy-modal";
-
-    //$wt.after(modal, container);
+    modal.id = id;
+    modal.setAttribute('hidden', true);
     document.body.appendChild(modal);
 
-    var modalMask = document.createElement("div");
-    modalMask.className = "wt-taxonomy-modal-mask";
-
+    // Mask.
+    let modalMask = document.createElement("div");
+    modalMask.className = "wt-taxonomy-modal-mask " + id;
+    modalMask.setAttribute('hidden', true);
     document.body.appendChild(modalMask);
-    //$wt.after(modalMask, container);
 
-    modal.innerHTML = `
+    modal.innerHTML = $wt.template(`
 
-      <h2 class="unselected">Taxonomy <span>browser</span> <b data-index="">✖</b></h2>
+      <h2 class="unselected">
+        Taxonomy <span>browser</span>
+        <button aria-controls="{id}">✖</button>
+      </h2>
       <div class="unselected wt-taxonomy-modal-search">
         <input placeholder="Search...">
       </div>
@@ -71,23 +77,27 @@ $wt.taxonomy = {
         <button>Cancel</button>,
       </div>
 
-    `;
+    `, {
+      id: id
+    });
+
+    $wt.aria(modal);
 
     /**
      * DELEGATION EVENTS
      */
 
-    container.onclick = function (e) {
+    container.onclick = (e) => {
 
-      var src = e.target;
-      var tag = src.tagName;
-      var index = Number(src.getAttribute("data-index"));
+      let src = e.target;
+      let tag = src.tagName;
+      let index = src.getAttribute("data-index");
 
       // Remove term.
       if (tag === "B") {
 
-        terms = terms.filter(function (value, i) {
-          return index !== i;
+        terms = terms.filter((value, i) => {
+          return index !== value;
         });
 
         field.value = terms.join(',');
@@ -96,40 +106,6 @@ $wt.taxonomy = {
 
       }
 
-      // Browse to terms.
-      else if (tag === "BUTTON") {
-
-        modal.style.display = "block";
-        modalMask.style.display = "block";
-
-        terms = field.value.split(",").filter(function (name) {
-
-          return name.trim() !== '';
-
-        }).map(function (name, index) {
-
-          if (name && database[name]) {
-
-           /* selection.innerHTML += $wt.template([
-              "<span>{name} <b data-index='{index}'>✖</b></span>"
-            ].join(''), {
-              name: name,
-              index: String(index)
-            });*/
-
-          }
-
-          return name;
-
-        });
-
-      }
-
-    };
-
-    modal.onclick = function (e) {
-      modal.style.display = "none";
-      modalMask.style.display = "none";
     };
 
     /**
@@ -169,12 +145,16 @@ $wt.taxonomy = {
 
       });
 
-      container.innerHTML += "<button>Browse <i>✖</i></button>";
+      // Browser.
+      container.innerHTML += $wt.template(
+        "<button aria-controls='{id}'>Browse <i>✖</i></button>"
+      , {
+        id: id
+      });
 
-      console.log(terms);
+      $wt.aria(container);
 
     };
-
 
     /**
      * LOAD DATABASE REFERENCES
@@ -189,9 +169,6 @@ $wt.taxonomy = {
         fieldUpdate();
       }
     });
-
-    // PUBLIC?
-    this.update = fieldUpdate;
 
   }
 

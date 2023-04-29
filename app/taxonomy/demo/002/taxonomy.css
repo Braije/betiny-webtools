@@ -51,12 +51,13 @@
     color: #fff;
     border-color: #369;
     cursor: pointer;
-    padding: 16px 20px;
+    padding: 15px 18px;
   }
   .wt-taxonomy button i {
     font-style: normal;
     transform: rotate(45deg);
     pointer-events: none;
+    margin-left: 5px;
   }
 
 }
@@ -70,7 +71,6 @@
     right: 0;
     bottom: 0;
     background: rgba(255,255,255,0.5);
-    display: none;
   }
   .wt-taxonomy-modal {
     position: fixed;
@@ -84,17 +84,14 @@
     width: 50%;
     min-width: 500px;
     max-width: 800px;
-    display: none;
   }
   .wt-taxonomy-modal h2 {
     padding: 0 30px;
     margin: 0;
-    line-height: 70px;
-    height: 80px;
+    height: 100px;
     color: #fff;
     background-color: #369;
-    font-size: 26px;
-    border-bottom: 10px solid #69c;
+    font-size: 32px;
     display: flex;
     align-items: center;
   }
@@ -102,23 +99,25 @@
     color: #cde;
     margin-left: 10px;
   }
-  .wt-taxonomy-modal h2 b {
+  .wt-taxonomy-modal h2 button {
     margin-left: auto;
     color: #fff;
     opacity: 0.5;
+    background-color: transparent;
+    border: 0;
+    font-size: 32px;
+    cursor: pointer;
   }
 
-  .wt-taxonomy-modal-search {
-    border: 1px solid #ccc;
+  .wt-taxonomy-modal-search { 
+    border: 1px solid #ccc; 
     position: absolute;
-    left: 30px;
-    top: 100px;
-    right: 30px;
-    height: 50px;
+    left: 40px;
+    top: 130px;
+    right: 40px;
     background-color: #fff;
     overflow: hidden;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 3px 3px #ccc;
   }
   .wt-taxonomy-modal-search input {
     width: 100%;
@@ -130,11 +129,12 @@
   }
   .wt-taxonomy-modal-content {
     position: absolute;
-    left: 30px;
-    top: 170px;
-    right: 30px;
-    bottom: 30px;
+    left: 40px;
+    top: 200px;
+    right: 40px;
+    bottom: 40px;
     overflow: auto;
+    border: 1px solid #ccc;
   }
   .wt-taxonomy-modal-content h6 {
     font-size: 22px;

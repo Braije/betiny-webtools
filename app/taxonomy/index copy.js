@@ -1,5 +1,6 @@
 
 const $ = require("betiny-core");
+const axios = require("axios");
 
 let endpoint = "https://publications.europa.eu/webapi/rdf/sparql?default-graph-uri=&";
 let sparkl = {};
@@ -187,18 +188,18 @@ const getTerm = (parent, urls, lang = 'en', callback) => {
 
   urls = urls.slice(1);
 
-  $.request(termURL(childurl, lang)).then(data => {
+  axios(termURL(childurl, lang)).then(response => {
 
     // console.log(data.response.results.bindings);
 
     retry = 0;
 
-    if (data.response.results.bindings[0]) {
+    if (response.data.results.bindings[0]) {
       let currentChild = {
         parent: parent,
         id: childurl.substring(childurl.lastIndexOf('/') + 1),
         url: childurl,
-        name: data.response.results.bindings[0].prefLabel.value
+        name: response.data.results.bindings[0].prefLabel.value
       };
 
       sparkl.push(currentChild);
@@ -245,14 +246,14 @@ const getChild = (node, lang = 'en', callback) => {
 
   let term = node.url;
 
-  $.request(childURL(term, lang)).then(data => {
+  axios(childURL(term, lang)).then(response => {
 
     retry = 0;
 
     //console.log(data.response.results.bindings);
 
     // List of url of each children.
-    let childrenList = data.response.results.bindings.map(row => {
+    let childrenList = response.data.results.bindings.map(row => {
       return row.narrower?.value;
     }).filter(row => {
       return row;
@@ -361,13 +362,13 @@ const getDico = (lang = 'en') => {
 
   console.log("\n");
 
-  $.request(rootURL(lang)).then(data => {
+  axios.get(rootURL(lang)).then(response => {
 
-    // return console.log(data.response.results.bindings);
+    //return console.log(response.data.results.bindings);
 
     // => LABEL : { id: xxx, url: zzz }
     let toPivot = {};
-    data.response.results.bindings.map(function (row) {
+    response.data.results.bindings.map(function (row) {
       let term = row.term.value;
       let label = row.prefLabel.value;
       toPivot[label] = {
@@ -388,8 +389,6 @@ const getDico = (lang = 'en') => {
       }};
     });
 
-    // console.log(sparkl);
-
     rootThrottle(0, lang);
 
   }).catch( err => console.log );
@@ -398,7 +397,7 @@ const getDico = (lang = 'en') => {
 
 /**
  * ARGUMENTS
- * It take +/- 2min by language (1656 translations).
+ * => yarn start import:taxonomy lang:XX
  */
 
 $.arguments.add('import:taxonomy', (cfg) => {
