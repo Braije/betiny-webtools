@@ -17,7 +17,7 @@ const config = require('./config.js');
 /**
  * DELETE FILES
  * Delete files based on date creation properties.
- * 
+ *
  * TODO: Re-usable method to delete files based on folder and date range
  * TODO: Manage folder start with or without / at start
  * TODO: Manage the "/" of folder at the end
@@ -36,7 +36,7 @@ const cleanUpFilesInFolder = (config = {}) => {
 
   // Where.
   let html2mRead = $.file.read(params.folder);
-    
+
   // Filter by date.
   html2mRead.files.filter(file => {
     let { creation } = $.file.stats(params.folder + file);
@@ -44,8 +44,8 @@ const cleanUpFilesInFolder = (config = {}) => {
     let diff = (new Date() - creation);
     let shouldBeDelete = (range < diff);
     return (range < diff && (diff > 1000)) ;
-  
-  // Delete.  
+
+  // Delete.
   }).map(file => {
     console.log(
       $.draw()
@@ -87,9 +87,9 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   let urlAddress = "";
   let inputName;
-  let observer;  
+  let observer;
   let isReady;
-  let timer; 
+  let timer;
   let count = 0;
 
   /**
@@ -226,7 +226,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   else if (query.html) {
 
     let data = query.html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'')  
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'')
       .replace(/(\b)(on\S+)(\s*)=|javascript:|(<\s*)(\/*)script/ig, '');
 
     // Generate the html page.
@@ -270,7 +270,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
       .color("black").text(" HTML2M ").reset()
       .space(1).icon("top")
       .text("\n").space(10).icon("child").space(1).text("REQUEST")
-      .reset().finish()  
+      .reset().finish()
   );
 
   /**
@@ -320,11 +320,11 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
       .space(1).underline().text(urlAddress).reset()
       .reset()
       .text("\n").space(10).icon("pipe")
-      .finish()  
+      .finish()
   );
 
   // Manage lazy loading image.
-  await page.evaluate(() => { 
+  await page.evaluate(() => {
 
     // Reflow any lazy loading image.
     [].forEach.call(document.querySelectorAll('img[loading="lazy"]'), img => {
@@ -359,7 +359,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
       $.draw()
         .space(10).icon("child").space(1)
           .text("WAIT").space(1).color("yellow")
-          .text(count++).text("\r").reset().finish()  
+          .text(count++).text("\r").reset().finish()
     );
 
     timer = setTimeout(() => {
@@ -368,7 +368,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
     }, tmp);
 
   };
- 
+
   const screenshot = async () => {
 
     console.log(
@@ -376,7 +376,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
         .text("\n").space(10).icon("pipe")
         .text("\n").space(10).icon("child")
         .space(1).text("SCREENSHOT")
-        .reset().finish()  
+        .reset().finish()
     );
 
     // Remove event listener from process.
@@ -488,7 +488,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
         .space(1).underline().text($.server.url("/rest/html2m/output/" + outputFileName)).reset()
         .text("\n").space(10).icon("pipe").space(1)
         .text("\n").space(10).icon("end").space(1).text("DONE")
-        .text("\n").reset().finish()  
+        .text("\n").reset().finish()
     );
 
     // Auto-cleanup old files
@@ -513,7 +513,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   await page.exposeFunction('checkDom', () => check(2000));
 
   // Wait until all is ok.
-  await page.evaluate(() => { 
+  await page.evaluate(() => {
     // Create an observer instance linked to the callback function.
     observer = new MutationObserver(checkDom);
 
@@ -526,7 +526,7 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
 
   // Survey all network request.
   await page.on('request', () => check(3000));
-  
+
   // Fallback for static page.
   check(1000);
 
@@ -586,12 +586,12 @@ $.on("ready", () => {
 
   console.log(
     $.draw()
-      .space(1).background("green")
+      .space(1).background("blue")
       .color("black").text(" HTML2M ").reset()
       .space(1).icon("top").text("  DEMO")
       .text("\n").space(10).icon("end").space(1).color("cyan").underline().text($.server.url('/demo/html2m'))
       .text("\n").reset()
-      .finish()  
+      .finish()
   );
 
 });

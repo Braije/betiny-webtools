@@ -160,7 +160,8 @@ const termURL = (term, lang = 'en') => {
     WHERE {
       <${term}> :inScheme <http://data.europa.eu/uxp/det> .
       <${term}> :prefLabel ?prefLabel .
-      FILTER ( lang(?prefLabel) = "${lang}" ) .
+      <${term}> :definition ?definition .
+      FILTER ( lang(?prefLabel) = "${lang}" AND lang(?definition) = "${lang}") .
     }
   `;
 
@@ -198,7 +199,8 @@ const getTerm = (parent, urls, lang = 'en', callback) => {
         parent: parent,
         id: childurl.substring(childurl.lastIndexOf('/') + 1),
         url: childurl,
-        name: data.response.results.bindings[0].prefLabel.value
+        name: data.response.results.bindings[0].prefLabel.value,
+        definition: data.response.results.bindings[0].definition.value,
       };
 
       sparkl.push(currentChild);
@@ -215,7 +217,7 @@ const getTerm = (parent, urls, lang = 'en', callback) => {
 
     setTimeout(() => {
       getTerm(parent, urls, lang, callback);
-    }, 75);
+    }, 25);
 
   }).catch( err => {
 
@@ -233,7 +235,7 @@ const getTerm = (parent, urls, lang = 'en', callback) => {
 
       setTimeout(() => {
         getTerm(parent, ori, lang, callback);
-      }, 75);
+      }, 25);
 
     }
 
@@ -315,7 +317,7 @@ const rootThrottle = (index, lang) => {
       return node;
     });
 
-    $.file.create('temp/taxonomy_' + lang + '.json', JSON.stringify(sparkl));
+    $.file.create('temp/taxonomy_' + lang + '.json', JSON.stringify(sparkl,2,2));
 
     if (isUniqueLang) {
       process.exit();

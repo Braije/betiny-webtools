@@ -16,6 +16,7 @@ require('./app/html2m');
 require('./app/nuts');
 require('./app/etrans');
 require('./app/taxonomy');
+require('./app/geocoding');
 
 // Custom root route.
 $.route.get('/', (req, res) => {
