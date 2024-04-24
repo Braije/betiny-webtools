@@ -4,11 +4,9 @@
 
 const $ = require('betiny-core');
 
-// TODO: Move to central API?
+// Basis.
 const fs = require("fs");
 const url = require("url");
-
-// ...
 const puppeteer = require("puppeteer");
 
 // Custom config.
@@ -280,14 +278,15 @@ $.route.post("/rest/html2m/convert", async (req, res) => {
   const browser = await puppeteer.launch({
     executablePath: config.browserPath,
     args: browserArgs,
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    headless: "new"
     // Give details about what's happen in the browser page.
     //, dumpio: true
   });
 
   const terminate = async () => {
     if (browser && browser.process() != null) {
-      await browser.process().kill('SIGINT');
+      browser.process().kill('SIGINT');
     }
   }
 

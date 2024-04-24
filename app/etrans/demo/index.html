@@ -150,7 +150,7 @@
         textToTranslate: _text.value,
         sourceLanguage: _sourceLanguage.value,
         targetLanguage: _targetLanguage.value,
-        domain: "spd",
+        domain: "gen",
       };
 
       var xhttp = new XMLHttpRequest();
@@ -199,6 +199,9 @@
     var displayPreview = function (message) {
       preview.value = decodeURIComponent(escape(atob(message)));
     }
+
+
+    const DigestClient = require('digest-fetch');
 
 </script>
 

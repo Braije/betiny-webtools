@@ -1,0 +1,468 @@
+/* BASIS */
+@media all {
+  .wt-taxonomy * {
+    display: inline-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    outline: 0;
+  }
+
+  .wt-taxonomy button {
+    background-color: #369;
+    color: #fff;
+    border-color: #369;
+    cursor: pointer;
+    padding: 15px 18px;
+    margin: 10px 10px 0 0;
+    border-radius: 5px;
+    font-size: 18px;
+  }
+
+  .wt-taxonomy button i {
+    font-style: normal;
+    transform: rotate(45deg);
+    pointer-events: none;
+    margin-left: 5px;
+  }
+
+  .wt-taxonomy button:disabled:focus-visible,
+  .wt-taxonomy button:disabled:active,
+  .wt-taxonomy button:disabled {
+    background-color: #ccc;
+    cursor: default;
+  }
+}
+
+/* TAGS LIST */
+@media all {
+  .wt-taxonomy--tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #f6f6f6;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: inset 0 2px 2px #ddd;
+    font-size: 18px;
+  }
+
+  .wt-taxonomy--tags span {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 10px 14px;
+    border-radius: 5px;
+    margin: 4px;
+    white-space: nowrap;
+    color: #369;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1;
+    box-shadow: 0 2px 2px #ddd;
+  }
+
+  .wt-taxonomy--tags span.wt-taxonomy--notag {
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    color: #444;
+    padding: 10px 5px;
+  }
+
+  .wt-taxonomy--tags svg {
+    height: 34px;
+    width: 34px;
+    fill: #369;
+  }
+
+  .wt-taxonomy--tags b {
+    color: #369;
+    padding: 6px 8px;
+    border-radius: 50%;
+  }
+
+  .wt-taxonomy--tags b:hover {
+    cursor: pointer;
+    background-color: #369;
+    color: #fff;
+    border-color: #369;
+  }
+}
+
+/* SEARCH FILTER */
+@media all {
+  .wt-taxonomy--search-result {
+    position: absolute;
+    left: 30px;
+    top: 10px;
+    right: 20px;
+    bottom: 20px;
+    overflow: auto;
+    background-color: #eee;
+    z-index: 5;
+    padding-bottom: 30px;
+    display: none;
+  }
+  .wt-taxonomy--search-result u {
+    border-bottom: 3px solid yellowgreen;
+    text-decoration: none;
+  }
+}
+
+/* MODAL */
+@media all {
+  .wt-taxonomy--modal {
+    position: fixed;
+    background-color: #f3f3f3;
+    z-index: 60;
+    box-shadow: -15px 0 30px 0 rgb(0 0 0 / 40%);
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    min-width: 720px;
+  }
+
+  .wt-taxonomy--modal h2 {
+    padding: 0 10px 0 30px;
+    margin: 0;
+    height: 80px;
+    color: #fff;
+    background-color: #369;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+  }
+
+  .wt-taxonomy--modal h2 span {
+    color: #cde;
+    margin-left: 10px;
+    font-size: 32px;
+  }
+
+  .wt-taxonomy--modal h2 button {
+    margin: 0 0 0 auto;
+    color: #fff;
+    opacity: 0.5;
+    background-color: transparent;
+    border: 0;
+    font-size: 32px;
+    cursor: pointer;
+  }
+
+  .wt-taxonomy--modal-search {
+    border: 1px solid #ccc;
+    position: absolute;
+    left: 40px;
+    top: 110px;
+    right: 40px;
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 3px 3px #ccc;
+  }
+
+  .wt-taxonomy--modal-search input {
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    font-size: 20px;
+    outline: none;
+    border: 0;
+  }
+
+  .wt-taxonomy--modal-body {
+    position: absolute;
+    left: 0;
+    top: 200px;
+    right: 0;
+    bottom: 240px;
+    background-color: #eee;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 30px;
+  }
+}
+
+/* FOOTER ? */
+@media all {
+  .wt-taxonomy--modal-footer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 240px;
+    padding: 0;
+    background-color: #f9f9f9;
+    display: flex;
+    gap: 10px;
+  }
+
+  .wt-taxonomy--modal-footer .wt-taxonomy--modal-selected-tags {
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .wt-taxonomy--modal-footer .wt-taxonomy--modal-selected-tags h3 {
+    margin: 0;
+    padding: 10px 30px 0;
+    font-size: 16px;
+    color: #bbb;
+  }
+
+  .wt-taxonomy--tags-selected {
+    border: 0;
+    overflow: auto;
+    max-height: 200px;
+    box-shadow: none;
+    background-color: transparent;
+    border-radius: 0;
+    overflow: auto;
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    right: 0;
+    bottom: 10px;
+    display: inline-block;
+  }
+
+  .wt-taxonomy--modal .wt-taxonomy--tags-selected span {
+    font-size: 16px;
+    padding: 5px 5px 5px 10px;
+    margin: 0 10px 10px 0;
+    gap: 2px;
+    display: inline-block;
+  }
+
+  .wt-taxonomy--modal .wt-taxonomy--tags-selected span b {
+    display: inline-block;
+  }
+
+  .wt-taxonomy--modal-actions {
+    margin: 0 0 0 auto;
+    padding: 30px 10px 10px 20px;
+  }
+}
+
+@media all and (max-width: 720px) {
+  .wt-taxonomy--modal {
+    position: fixed;
+    background-color: #f3f3f3;
+    z-index: 60;
+    box-shadow: none;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    min-width: 420px;
+    max-width: auto;
+  }
+}
+
+/* TREE - MAIN CONTAINER */
+@media all {
+  .wt-taxonomy--tree {
+    position: absolute;
+    left: 30px;
+    top: 10px;
+    right: 20px;
+    bottom: 20px;
+    overflow: auto;
+  }
+}
+
+/* TREE - DETAILS */
+@media all {
+  .tree {
+    --spacing: 30px;
+    --radius: 10px;
+  }
+  .tree * {
+    font-size: 16px;
+  }
+
+  .tree li {
+    display: block;
+    position: relative;
+    margin-top: 16px;
+    padding-left: calc(2 * var(--spacing) - var(--radius) + 4px);
+  }
+
+  .tree ul {
+    margin-left: calc(var(--radius) - var(--spacing) - 6px);
+    padding-left: 0;
+  }
+
+  .tree ul li {
+    border-left: 2px solid #ddd;
+  }
+
+  .tree ul li:last-child {
+    border-color: transparent;
+  }
+
+  .tree ul li::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(var(--spacing) / -2);
+    left: -2px;
+    width: calc(var(--spacing) + 2px);
+    height: calc(var(--spacing) + 1px);
+    border: solid #ddd;
+    border-width: 0 0 2px 2px;
+  }
+
+  .tree summary {
+    display: inline-block;
+    cursor: pointer;
+    height: var(--spacing);
+    line-height: var(--spacing);
+    font-weight: bold;
+    color: #444;
+    margin-top: 1px;
+  }
+
+  .tree summary::marker,
+  .tree summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tree summary:focus {
+    outline: none;
+  }
+
+  .tree summary:focus-visible {
+    outline: none;
+  }
+
+  .tree li::after,
+  .tree summary::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(var(--spacing) / 2 - var(--radius));
+    left: calc(var(--spacing) - var(--radius) - 1px);
+    width: calc(2 * var(--radius));
+    height: calc(2 * var(--radius));
+    border-radius: 50%;
+    background: #ddd;
+  }
+
+  .tree summary::before {
+    z-index: 1;
+    content: "+";
+    background-color: #fff;
+    border: 1px solid #369;
+    color: #369;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-left: -5px;
+    margin-top: -3px;
+    font-weight: normal;
+    font-size: 23px;
+  }
+
+  .tree details[open]>summary::before {
+    background-position: calc(-2 * var(--radius)) 0;
+    content: "−";
+    background-color: #fff;
+    border: 1px solid #369;
+    color: #369;
+  }
+}
+
+/* TREE - DESIGN */
+@media all {
+
+  /* EXTRA TREE SPACE */
+  .tree ul li:last-child {
+    margin-bottom: 16px !important;
+    border-bottom: 1px solid transparent !important;
+  }
+
+  /* TREE LINE? */
+  .tree li li:first-child {
+    border-top: 10px solid transparent;
+  }
+  .tree .wt-taxonomy--tree-extra[open]:before {
+    content: " ";
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    background-color: #ddd;
+    overflow: hidden;
+    left: 28px;
+    top: 30px;
+    border: 0;
+  }
+
+  /* NO TREE ICON */
+  .tree summary.wt-taxonomy--tree-noicon:before {
+    display: none;
+  }
+
+  /* MAIN TAG BUTTON */
+  .tree .wt-taxonomy--button-add {
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    font-weight: normal;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 5px 5px 0;
+    box-shadow: 0 2px 2px #ccc;
+    border: 1px solid #369;
+    background-color: #369;
+    color: #fff;
+  }
+  .tree .wt-taxonomy--button-add:hover {
+    box-shadow: 0 2px 2px #ddd;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #369;
+  }
+
+  .tree .wt-taxonomy--button-add[disabled] {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #369;
+    opacity: .5;
+  }
+  .tree .wt-taxonomy--button-add[disabled]:hover {
+    opacity: 1;
+  }
+
+  /* MAIN TAG BUTTON NEARBY COLLAPSE */
+  .tree .wt-taxonomy--button-nearcollapse {
+    position: absolute;
+    top: -3px;
+    margin: 0;
+  }
+
+  /* EXCLUDE TAG FROM SEARCH */
+  .wt-taxonomy--search-result .wt-taxonomy--tree-exclude[data-exclude] {
+    background-color: #ddd;
+    border-color: #ccc;
+    color: #444;
+    box-shadow: none;
+    cursor: default;
+
+    /*
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg fill='%23369' clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m15.985 17.031c-1.479 1.238-3.384 1.985-5.461 1.985-4.697 0-8.509-3.812-8.509-8.508s3.812-8.508 8.509-8.508c4.695 0 8.508 3.812 8.508 8.508 0 2.078-.747 3.984-1.985 5.461l4.749 4.75c.146.146.219.338.219.531 0 .587-.537.75-.75.75-.192 0-.384-.073-.531-.22zm-5.461-13.53c-3.868 0-7.007 3.14-7.007 7.007s3.139 7.007 7.007 7.007c3.866 0 7.007-3.14 7.007-7.007s-3.141-7.007-7.007-7.007zm1.991 6.999c0-.552.448-1 1-1s1 .448 1 1-.448 1-1 1-1-.448-1-1zm-3 0c0-.552.448-1 1-1s1 .448 1 1-.448 1-1 1-1-.448-1-1zm-3 0c0-.552.448-1 1-1s1 .448 1 1-.448 1-1 1-1-.448-1-1z' fill-rule='nonzero'/%3E%3C/svg%3E");
+    background-position: calc(100% - 10px) center;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    */
+  }
+
+}

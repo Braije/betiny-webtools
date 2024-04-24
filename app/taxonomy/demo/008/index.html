@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//webtools.europa.eu/load.js"></script>
+    <link href="base.css" rel="stylesheet">
+    <link href="taxonomy.css" rel="stylesheet">
+    <script src="taxonomy.js"></script>
+</head>
+<body style="padding: 40px;">
+
+<h1>Taxonomy POC</h1>
+
+<p>Experimental component to manage terms.</p>
+<div style="padding: 40px; margin: 20px 0; border: 5px dashed #eee;">
+  <textarea id="taxonomy" style="width: 100%; height: 90px;">
+    {
+      "410":"Deregulation",
+      "1452":"Financial institution",
+      "2447":"Banking policy",
+      "8469":"Financial services",
+      "434743":"Climate change policy",
+      "c_749f2ce9":"Green economy"
+    }
+  </textarea>
+</div>
+
+<pre>
+&lt;textarea id="taxonomy" style="width: 100%; height: 90px;">
+  {
+    "410":"Deregulation",
+    "1452":"Financial institution",
+    "2447":"Banking policy",
+    "8469":"Financial services",
+    "434743":"Climate change policy",
+    "c_749f2ce9":"Green economy"
+  }
+&lt;/textarea>
+</pre>
+<p>UEC</p>
+<pre>{
+    "service" : "taxonomy",
+    "target" : "#taxonomy"
+}</pre>
+
+<script type="application/json">{
+  "utility" : "taxonomy",
+  "target" : "#taxonomy"
+}</script>
+
+</body>
+</html>

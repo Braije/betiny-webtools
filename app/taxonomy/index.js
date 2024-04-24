@@ -426,7 +426,7 @@ $.arguments.add('import:taxonomy', (cfg) => {
  * TODO: yeahhh.
  */
 
-$.route.static("/demo/taxonomy", __dirname + "/demo/002");
+$.route.static("/demo/taxonomy", __dirname + "/demo/008");
 
 /**
  * READY

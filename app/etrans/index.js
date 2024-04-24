@@ -29,7 +29,7 @@ let tunnelling = $.server.url();
 const log = params => {
   params.end = Date.now();
   params.time = Number(params.end) - Number(params.now);
-  //console.log("LOG:", params);
+  // console.log("LOG:", params);
 };
 
 /**
@@ -94,7 +94,10 @@ $.route.post("/rest/etrans/translate", async (req, res) => {
 
       sourceLanguage: req.body.sourceLanguage,
       targetLanguages: [req.body.targetLanguage],
-      domain: req.body.domain || "SPD", // GEN
+      domain: req.body.domain || "gen", // GEN
+      user: $.env("ETRANS_USER"),
+      textToTranslate: Buffer.from(req.body.textToTranslate).toString('base64'),
+      collectorUrl: tunnelling + "/rest/etrans/collector?id=" + id,
 
       callerInformation: {
         application: 'DIGIT_D1_Webttools_EUWidg_20200612',
@@ -119,6 +122,10 @@ $.route.post("/rest/etrans/translate", async (req, res) => {
     }
 
   }, (error, response, body) => {
+
+    if (error) {
+      console.log("ERROR", error);
+    }
 
     // ERROR "-xxxx".
     if (parseInt(body) < 0) {
@@ -160,7 +167,7 @@ $.route.post("/rest/etrans/translate", async (req, res) => {
           id: id
         }).end();
 
-      }, 15000);
+      }, 5000);
 
     }
 
@@ -173,6 +180,10 @@ $.route.post("/rest/etrans/translate", async (req, res) => {
  */
 
 $.route.post("/rest/etrans/collector", async (req, res) => {
+
+  console.log("collect");
+
+  res.header("Access-Control-Allow-Origin", "*");
 
   let data = [];
 
@@ -215,9 +226,50 @@ $.route.static("/demo/etrans", __dirname + "/demo");
 
 $.on('ready', async () => {
 
+  /*
+  const DigestClient = require('digest-fetch');
+  const client = new DigestClient($.env("ETRANS_USER"), $.env("ETRANS_PASSWORD"));
+  let responsePromise = client.fetch($.env("ETRANS_URL"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      sourceLanguage: "en",
+      targetLanguages: "fr",
+      domain: "gen", 
+      externalReference: "https//europa.eu",
+      callerInformation: {
+        application: 'DIGIT_D1_Webttools_EUWidg_20200612',
+        username: 'Webtools'
+      },
+      documentToTranslateBase64: {
+        content: Buffer.from("Hello").toString('base64'),
+        format: "html"
+      },
+      destinations: {
+        httpDestinations: [tunnelling + "/rest/etrans/collector?id=toto"]
+      }
+    })
+    
+  });
+  let response = await responsePromise;
+  if (response === 'undefined') {
+    console.log('No response received from eTranslation');
+  }
+  if (response.status !== 200) {
+    console.log("Translation response with status code " + response.status);
+  }
+
+  let responseBody = await response.text();
+
+  console.log("\n\n", responseBody);
+*/
+
   let dev = $.env("MODE");
   let isDev = dev === "dev";
 
+  /*
   if (isDev) {
 
     // https://betiny.loca.lt
@@ -240,6 +292,7 @@ $.on('ready', async () => {
     tunnelling = tunnel.url;
 
   }
+  */
 
   /**
    * DROP CONSOLE INFO
@@ -249,12 +302,15 @@ $.on('ready', async () => {
     $.draw()
       .space(1).background("yellow")
       .color("black").text(" ETRANS ").reset()
-      .space(1).icon("top").text("  DEMO")
-      .text("\n").space(10).icon(isDev ? "child" : "end").space(1).color("cyan").underline().text($.server.url('/demo/etrans'))
+      .text("\n\n")
+      .space(4).text("DEMO")
+      .text("\n").space(4).color("cyan").underline().text($.server.url('/demo/etrans'))
       .reset()
+      .text("\n")
     .finish()  
   );
 
+  /*
   if (isDev) {
     console.log( 
       $.draw()
@@ -264,7 +320,7 @@ $.on('ready', async () => {
         .text("\n").reset()
       .finish()  
     );
-  } 
+  } */
 
   console.log(); 
 
